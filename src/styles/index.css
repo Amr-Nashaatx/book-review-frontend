@@ -1,0 +1,21 @@
+/* Navbar styling */
+nav {
+  border-bottom: 1px solid rgb(1, 114, 173);
+}
+nav a:visited {
+  color: var(--pico-primary-hover);
+}
+nav a:hover {
+  text-decoration: underline;
+}
+
+nav a.active {
+  color: var(--pico-primary);
+  font-weight: 600;
+}
+
+/* Form styling */
+form {
+  padding: 2rem 4rem;
+  max-width: 900px;
+}
