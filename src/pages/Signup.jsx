@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import Error from "../components/Error";
+import { useSubmitForm } from "../hooks/useSubmitForm";
 
 export default function Signup() {
   const [formData, setFormData] = useState({
@@ -7,14 +9,18 @@ export default function Signup() {
     email: "",
     password: "",
   });
-
+  const { formErrors, submitForm } = useSubmitForm(
+    ["name", "email", "password"],
+    "/auth/register",
+    "/profile"
+  );
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
+    await submitForm(formData);
   };
 
   return (
@@ -37,7 +43,7 @@ export default function Signup() {
               required
             />
           </label>
-
+          {formErrors.name && <Error message={formErrors.name} />}
           <label htmlFor="email">
             Email Address
             <input
@@ -49,6 +55,7 @@ export default function Signup() {
               onChange={handleChange}
               required
             />
+            {formErrors.email && <Error message={formErrors.email} />}
           </label>
 
           <label htmlFor="password">
@@ -63,9 +70,11 @@ export default function Signup() {
               required
               minLength="6"
             />
+            {formErrors.password && <Error message={formErrors.password} />}
           </label>
 
           <button type="submit">Sign Up</button>
+          {formErrors.general && <Error message={formErrors.general} />}
           <footer>
             <Link to="/login">Already have an account?</Link>
           </footer>

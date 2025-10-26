@@ -19,3 +19,7 @@ form {
   padding: 2rem 4rem;
   max-width: 900px;
 }
+
+.main-content {
+  padding: 4rem 8rem;
+}

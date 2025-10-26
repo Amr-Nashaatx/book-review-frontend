@@ -1,4 +1,7 @@
 import { useState } from "react";
+import Error from "../components/Error";
+
+import { useSubmitForm } from "../hooks/useSubmitForm";
 
 export default function Login() {
   const [formData, setFormData] = useState({
@@ -6,13 +9,18 @@ export default function Login() {
     password: "",
   });
 
+  const { formErrors, submitForm } = useSubmitForm(
+    ["email", "password"],
+    "/auth/login",
+    "/profile"
+  );
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
+    await submitForm(formData);
   };
 
   return (
@@ -34,6 +42,7 @@ export default function Login() {
               onChange={handleChange}
               required
             />
+            {formErrors.email && <Error message={formErrors.email} />}
           </label>
 
           <label htmlFor="password">
@@ -48,9 +57,10 @@ export default function Login() {
               required
               minLength="6"
             />
+            {formErrors.password && <Error message={formErrors.password} />}
           </label>
-
-          <button type="submit">Sign Up</button>
+          {formErrors.general && <Error message={formErrors.general} />}
+          <button type="submit">Login</button>
         </form>
       </article>
     </main>
