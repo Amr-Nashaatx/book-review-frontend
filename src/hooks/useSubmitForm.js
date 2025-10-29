@@ -4,13 +4,31 @@ import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { API_BASE_URL } from "../constants";
 
-export const useSubmitForm = (fields, url, navTo = "/") => {
+const sendRequest = async (url, formData, isEdit = false) => {
+  const method = isEdit ? "put" : "post";
+  let res;
+  try {
+    res = await axios({
+      method,
+      url: `${API_BASE_URL}${url}`,
+      data: formData,
+      withCredentials: true,
+    });
+  } catch (error) {
+    throw new Error(error);
+  }
+  return res.data.data;
+};
+
+export const useSubmitForm = (fields, url, navTo = "/", isEdit = false) => {
+  const [isLoading, setIsLoading] = useState(false);
+
   let errorFields = {};
   const navigate = useNavigate();
   for (let field of fields) {
     errorFields[field] = "";
   }
-  const { setIsLoggedIn } = useContext(AuthContext);
+  const { setIsLoggedIn, setCurrentUser } = useContext(AuthContext);
 
   const [formErrors, setFormErrors] = useState({
     general: "",
@@ -23,10 +41,14 @@ export const useSubmitForm = (fields, url, navTo = "/") => {
       ...fields,
     });
     try {
-      await axios.post(`${API_BASE_URL}${url}`, formData, {
-        withCredentials: true,
-      });
-      setIsLoggedIn(true);
+      setIsLoading(true);
+      const data = await sendRequest(url, formData, isEdit);
+      // if the request is for either signup or login, set user state.
+      if (data.user) {
+        setIsLoggedIn(true);
+        setCurrentUser(data.user);
+      }
+      setIsLoading(false);
       navigate(navTo);
     } catch (error) {
       const responseData = error.response?.data;
@@ -38,14 +60,16 @@ export const useSubmitForm = (fields, url, navTo = "/") => {
             newErrors[err.path] = err.msg;
           }
           setFormErrors((prev) => ({ ...prev, ...newErrors }));
+          setIsLoading(false);
         }
       } else {
         setFormErrors((prev) => ({
           ...prev,
           general: error.response.data.message,
         }));
+        setIsLoading(false);
       }
     }
   };
-  return { formErrors, submitForm };
+  return { isLoading, formErrors, submitForm };
 };

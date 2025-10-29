@@ -22,6 +22,14 @@ export default function Navbar() {
         </li>
       </ul>
       <ul>
+        <li>
+          <NavLink
+            to="/books"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
+            Books
+          </NavLink>
+        </li>
         {isLoggedIn && (
           <>
             <li>
@@ -30,6 +38,14 @@ export default function Navbar() {
                 className={({ isActive }) => (isActive ? "active" : "")}
               >
                 Profile
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to="/books/new"
+                className={({ isActive }) => (isActive ? "active" : "")}
+              >
+                New Book
               </NavLink>
             </li>
             <li>

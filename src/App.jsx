@@ -4,6 +4,9 @@ import Signup from "./pages/Signup";
 import Login from "./pages/Login";
 import Profile from "./pages/Profile";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Books from "./pages/Books.jsx";
+import BookDetail from "./pages/BookDetail.jsx";
+import BookForm from "./pages/BookForm.jsx";
 
 export default function App() {
   return (
@@ -19,6 +22,25 @@ export default function App() {
             </ProtectedRoute>
           }
         />
+        <Route path="books" element={<Books />} />
+
+        <Route
+          path="books/new"
+          element={
+            <ProtectedRoute>
+              <BookForm />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="books/:id/edit"
+          element={
+            <ProtectedRoute>
+              <BookForm mode="edit" />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="books/:id" element={<BookDetail />} />
       </Route>
     </Routes>
   );
