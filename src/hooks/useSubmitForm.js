@@ -15,7 +15,7 @@ const sendRequest = async (url, formData, isEdit = false) => {
       withCredentials: true,
     });
   } catch (error) {
-    throw new Error(error);
+    throw error;
   }
   return res.data.data;
 };
@@ -51,7 +51,7 @@ export const useSubmitForm = (fields, url, navTo = "/", isEdit = false) => {
       setIsLoading(false);
       navigate(navTo);
     } catch (error) {
-      const responseData = error.response?.data;
+      const responseData = error.response ? error.response.data : null;
       if (responseData?.errors) {
         const errors = responseData?.errors;
         if (errors) {

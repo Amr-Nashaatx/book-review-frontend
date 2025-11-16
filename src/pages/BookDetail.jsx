@@ -1,26 +1,25 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { useFetchData } from "../hooks/useFetchData";
 import { AuthContext } from "../context/AuthContext";
 import { useContext } from "react";
-import axios from "axios";
-import { API_BASE_URL } from "../constants";
-import Button from "../components/Button";
+import { useBooksStore } from "../stores/booksStore";
+import { renderStars } from "../utils/renderStars";
 
 export default function BookDetail() {
   const { id } = useParams();
-  const { data: book, isLoading } = useFetchData(`/books/${id}`, "book");
+  const book = useBooksStore
+    .getState()
+    .booksData.books.find((book) => book._id === id);
+  const isLoading = useBooksStore((s) => s.isLoading);
+  const deleteBook = useBooksStore((s) => s.deleteBook);
+
   const { isLoggedIn, currentUser } = useContext(AuthContext);
-  const isOwner = isLoggedIn && currentUser?._id === book.userId;
+
+  const isOwner = isLoggedIn && currentUser?.id === book.createdBy;
+
   const navigate = useNavigate();
   const handleDelete = async () => {
-    try {
-      await axios.delete(`${API_BASE_URL}/books/${id}`, {
-        withCredentials: true,
-      });
-      navigate("/books");
-    } catch (err) {
-      console.error("Delete failed", err);
-    }
+    await deleteBook();
+    navigate("/books");
   };
 
   if (isLoading) return <p>Loading book...</p>;
@@ -45,7 +44,12 @@ export default function BookDetail() {
             <dd>{book.publishedYear}</dd>
           </>
         )}
-
+        {book.averageRating && (
+          <>
+            <dt>Rating</dt>
+            <dd>{renderStars(book.averageRating)}</dd>
+          </>
+        )}
         <dt>Description</dt>
         <dd>{book.description}</dd>
       </dl>
@@ -58,13 +62,17 @@ export default function BookDetail() {
               gap: "1rem",
             }}
           >
-            <Button to={`/books/${id}/edit`} variant="secondary">
+            <button to={`/books/${id}/edit`} variant="secondary">
               Edit
-            </Button>
+            </button>
 
-            <Button variant="danger" onClick={handleDelete}>
+            <button
+              onClick={handleDelete}
+              data-theme="secondary"
+              style={{ backgroundColor: "red", borderColor: "red" }}
+            >
               Delete
-            </Button>
+            </button>
           </div>
         )}
         <Link

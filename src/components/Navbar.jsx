@@ -1,18 +1,17 @@
 import { Link, NavLink } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import { useContext } from "react";
-import axios from "axios";
-import { API_BASE_URL } from "../constants";
+import { sendRequest } from "../utils/sendRequest";
+import { useBooksStore } from "../stores/booksStore";
 
 export default function Navbar() {
   const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext);
+  const clearStore = useBooksStore((s) => s.clearStore);
+
   const onLogoutClick = async () => {
-    try {
-      await axios.post(`${API_BASE_URL}/auth/logout`);
-      setIsLoggedIn(false);
-    } catch (error) {
-      return;
-    }
+    await sendRequest("/auth/logout", "post");
+    setIsLoggedIn(false);
+    clearStore();
   };
   return (
     <nav>

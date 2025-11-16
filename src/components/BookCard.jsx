@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 export default function BookCard({ book }) {
   return (
     <Link
-      key={book.id}
+      key={book._id}
       to={`/books/${book._id}`}
       style={{
         display: "block",
