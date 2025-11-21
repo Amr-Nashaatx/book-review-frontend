@@ -3,6 +3,7 @@ import { AuthContext } from "../context/AuthContext";
 import { useContext } from "react";
 import { useBooksStore } from "../stores/booksStore";
 import { renderStars } from "../utils/renderStars";
+import Reviews from "../components/Review";
 
 export default function BookDetail() {
   const { id } = useParams();
@@ -75,6 +76,8 @@ export default function BookDetail() {
             </button>
           </div>
         )}
+
+        <Reviews bookId={id} />
         <Link
           style={{ display: "inline-block", marginTop: "2rem" }}
           to="/books"

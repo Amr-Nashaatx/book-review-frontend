@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { capitalizeFirst } from "../utils/strings";
 import CustomSelect from "./CustomSelect";
 import { useBooksStore } from "../stores/booksStore";
 
@@ -14,7 +13,7 @@ export default function BookFilters({ onApplyFilters }) {
   const options = genres
     ? genres.map((genre) => ({
         value: genre,
-        label: capitalizeFirst(genre),
+        label: genre,
       }))
     : [];
 
