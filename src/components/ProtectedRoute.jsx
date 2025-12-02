@@ -1,9 +1,8 @@
-import { useContext } from "react";
-import { Navigate, useLocation } from "react-router-dom";
-import { AuthContext } from "../context/AuthContext";
+import { useLocation } from "react-router-dom";
+import { useAuthStore } from "../stores/authStore";
 
 export default function ProtectedRoute({ children }) {
-  const { isLoggedIn } = useContext(AuthContext);
+  const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
   const location = useLocation();
 
   if (!isLoggedIn) {

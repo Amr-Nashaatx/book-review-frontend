@@ -38,14 +38,24 @@ export default function Profile() {
         <h2>Your Profile</h2>
         <p>Welcome back, {user.name}!</p>
       </header>
+      <section>
+        <dl>
+          <dt>Name</dt>
+          <dd>{user.name}</dd>
 
-      <dl>
-        <dt>Name</dt>
-        <dd>{user.name}</dd>
-
-        <dt>Email</dt>
-        <dd>{user.email}</dd>
-      </dl>
+          <dt>Email</dt>
+          <dd>{user.email}</dd>
+        </dl>
+      </section>
+      <hr />
+      <section className="shelves">
+        <h2>Shelves</h2>
+        <ul>
+          {["favorite", "reading", "to-read"].map((shelf) => (
+            <li key={shelf}>{shelf}</li>
+          ))}
+        </ul>
+      </section>
     </article>
   );
 }

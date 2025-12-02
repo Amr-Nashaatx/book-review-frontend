@@ -1,6 +1,5 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { AuthContext } from "../context/AuthContext";
-import { useContext } from "react";
+import { useAuthStore } from "../stores/authStore";
 import { useBooksStore } from "../stores/booksStore";
 import { renderStars } from "../utils/renderStars";
 import Reviews from "../components/Review";
@@ -13,7 +12,7 @@ export default function BookDetail() {
   const isLoading = useBooksStore((s) => s.isLoading);
   const deleteBook = useBooksStore((s) => s.deleteBook);
 
-  const { isLoggedIn, currentUser } = useContext(AuthContext);
+  const { isLoggedIn, currentUser } = useAuthStore();
 
   const isOwner = isLoggedIn && currentUser?.id === book.createdBy;
 

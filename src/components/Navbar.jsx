@@ -1,16 +1,15 @@
 import { Link, NavLink } from "react-router-dom";
-import { AuthContext } from "../context/AuthContext";
-import { useContext } from "react";
+import { useAuthStore } from "../stores/authStore";
 import { sendRequest } from "../utils/sendRequest";
 import { useBooksStore } from "../stores/booksStore";
 
 export default function Navbar() {
-  const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext);
+  const { isLoggedIn, logout } = useAuthStore();
   const clearStore = useBooksStore((s) => s.clearStore);
 
   const onLogoutClick = async () => {
     await sendRequest("/auth/logout", "post");
-    setIsLoggedIn(false);
+    logout();
     clearStore();
   };
   return (

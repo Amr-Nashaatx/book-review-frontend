@@ -1,8 +1,8 @@
 import axios from "axios";
-import { useContext, useState } from "react";
-import { AuthContext } from "../context/AuthContext";
+import { useAuthStore } from "../stores/authStore";
 import { useNavigate } from "react-router-dom";
 import { API_BASE_URL } from "../constants";
+import { useState } from "react";
 
 const sendRequest = async (url, formData, isEdit = false) => {
   const method = isEdit ? "put" : "post";
@@ -28,7 +28,7 @@ export const useSubmitForm = (fields, url, navTo = "/", isEdit = false) => {
   for (let field of fields) {
     errorFields[field] = "";
   }
-  const { setIsLoggedIn, setCurrentUser } = useContext(AuthContext);
+  const { login } = useAuthStore();
 
   const [formErrors, setFormErrors] = useState({
     general: "",
@@ -45,8 +45,7 @@ export const useSubmitForm = (fields, url, navTo = "/", isEdit = false) => {
       const data = await sendRequest(url, formData, isEdit);
       // if the request is for either signup or login, set user state.
       if (data.user) {
-        setIsLoggedIn(true);
-        setCurrentUser(data.user);
+        login(data.user);
       }
       setIsLoading(false);
       navigate(navTo);
