@@ -41,6 +41,7 @@ export default function App() {
           }
         />
         <Route path="books/:id" element={<BookDetail />} />
+        <Route path="shelves/:id" element={<ShelfDetail />} />
       </Route>
     </Routes>
   );
