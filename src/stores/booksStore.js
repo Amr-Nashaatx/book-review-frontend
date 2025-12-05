@@ -44,7 +44,11 @@ export const useBooksStore = create(
           try {
             set({ isLoading: true, error: "" });
             console.log(params);
-            const res = await sendRequest("/books", "get", params);
+            const res = await sendRequest({
+              url: "/books",
+              method: "get",
+              params,
+            });
             const payload = {
               books: res.books || [],
               pageInfo: res.pageInfo || null,
@@ -62,7 +66,11 @@ export const useBooksStore = create(
             if (!pageInfo?.nextCursor) return null;
             set({ isLoading: true, error: "" });
             const params = { ...get().filters, after: pageInfo.nextCursor };
-            const res = await sendRequest("/books", "get", params);
+            const res = await sendRequest({
+              url: "/books",
+              method: "get",
+              params,
+            });
             const page = {
               books: res.books || [],
               pageInfo: res.pageInfo || null,
@@ -78,7 +86,7 @@ export const useBooksStore = create(
 
         getGenres: async () => {
           try {
-            const res = await sendRequest("/books/genres");
+            const res = await sendRequest({ url: "/books/genres" });
             set({ genres: res.genres || [] });
             return res.genres || [];
           } catch (err) {

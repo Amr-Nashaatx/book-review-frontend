@@ -1,4 +1,4 @@
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams, Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuthStore } from "../stores/authStore";
 import { useBooksStore } from "../stores/booksStore";
 import { renderStars } from "../utils/renderStars";
@@ -6,9 +6,11 @@ import Reviews from "../components/Review";
 
 export default function BookDetail() {
   const { id } = useParams();
-  const book = useBooksStore
-    .getState()
-    .booksData.books.find((book) => book._id === id);
+  const location = useLocation();
+  const book =
+    location.state?.book ||
+    useBooksStore.getState().booksData.books.find((b) => b._id === id);
+
   const isLoading = useBooksStore((s) => s.isLoading);
   const deleteBook = useBooksStore((s) => s.deleteBook);
 

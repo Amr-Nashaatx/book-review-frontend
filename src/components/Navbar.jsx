@@ -8,7 +8,7 @@ export default function Navbar() {
   const clearStore = useBooksStore((s) => s.clearStore);
 
   const onLogoutClick = async () => {
-    await sendRequest("/auth/logout", "post");
+    await sendRequest({ url: "/auth/logout", method: "post" });
     logout();
     clearStore();
   };

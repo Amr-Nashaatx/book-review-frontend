@@ -1,0 +1,49 @@
+/* Shared List Animation */
+.animated-list-item {
+  transition: opacity 0.5s ease-out;
+}
+
+/* Phase 1: slide out */
+.slide-out {
+  animation: slideOut 450ms ease forwards;
+}
+
+/* Phase 2: collapse downward */
+.collapse {
+  animation: collapse 300ms ease forwards;
+  overflow: hidden;
+}
+
+@keyframes slideOut {
+  0% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  40% {
+    opacity: 0.6;
+    transform: translateX(10px);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+}
+
+@keyframes collapse {
+  from {
+    height: var(--initial-height);
+    margin-top: var(--initial-margin-top);
+    margin-bottom: var(--initial-margin-bottom);
+    padding-top: var(--initial-padding-top);
+    padding-bottom: var(--initial-padding-bottom);
+    border-width: var(--initial-border-width);
+  }
+  to {
+    height: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    border-width: 0;
+  }
+}

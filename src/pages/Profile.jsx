@@ -1,17 +1,64 @@
 import { useEffect, useState } from "react";
 import { useFetchShelves } from "../hooks/useFetchShelves";
+import { useListAnimation } from "../hooks/useListAnimation";
 import { useAuthStore } from "../stores/authStore";
 import NewShelfModal from "../components/NewShelfModal";
-
-import { Link, Navigate } from "react-router-dom";
+import { sendRequest } from "../utils/sendRequest";
+import { Navigate, useNavigate } from "react-router-dom";
+import Toast from "../components/Toast/Toast";
+import Shelf from "../components/Shelf/Shelf";
 
 export default function Profile() {
-  const { fetchShelves, shelves } = useFetchShelves();
+  const { fetchShelves, shelves, setShelves } = useFetchShelves();
   const [isNewShelfModalOpen, setIsNewShelfModalOpen] = useState(false);
-  const { currentUser, isLoggedIn } = useAuthStore();
+  const {
+    removingId: shelfRemovingId,
+    collapsingId: shelfCollapsingId,
+    handleRemove: animateRemoveShelf,
+  } = useListAnimation();
 
+  const { currentUser, isLoggedIn } = useAuthStore();
+  const [toastMessage, setToastMessage] = useState("");
+  const navigate = useNavigate();
+
+  const handleCreateShelf = async ({ name, description }) => {
+    try {
+      const { shelf } = await sendRequest({
+        url: "/shelves",
+        method: "post",
+        body: { name, description },
+        params: { withCredentials: true },
+      });
+      setToastMessage("Shelf created successfully.");
+      setIsNewShelfModalOpen(false);
+      navigate(`/shelves/${shelf._id}`);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleRemoveShelf = async (shelfId) => {
+    const previousShelves = [...shelves];
+    try {
+      await animateRemoveShelf(shelfId, async () => {
+        setShelves(previousShelves.filter((shelf) => shelf._id !== shelfId));
+        await sendRequest({
+          url: `/shelves/${shelfId}`,
+          method: "delete",
+          params: { withCredentials: true },
+        });
+        setToastMessage("Shelf removed successfully.");
+      });
+    } catch (error) {
+      console.log(error);
+      setShelves(previousShelves);
+    }
+  };
+  const onCreateShelf = ({ name, description }) => {
+    handleCreateShelf({ name, description });
+  };
   useEffect(() => {
-    fetchShelves();
+    fetchShelves({ withCredentials: true });
   }, []);
 
   if (!isLoggedIn) {
@@ -36,7 +83,6 @@ export default function Profile() {
           </div>
         </dl>
       </section>
-
       <hr />
       <section className="shelves">
         <h2>Shelves</h2>
@@ -46,9 +92,7 @@ export default function Profile() {
         {isNewShelfModalOpen && (
           <NewShelfModal
             onClose={() => setIsNewShelfModalOpen(false)}
-            onCreate={(shelf) => {
-              console.log(shelf);
-            }}
+            onCreate={onCreateShelf}
           />
         )}
         {shelves && (
@@ -57,17 +101,18 @@ export default function Profile() {
             style={{ listStyle: "none", marginTop: "2rem" }}
           >
             {shelves.map((shelf) => (
-              <li key={shelf._id} className="shelf-card">
-                <div>
-                  <strong>{shelf.name} </strong>
-                  <small>({shelf.booksCount})</small>
-                </div>
-                <Link to={`/shelves/${shelf._id}`} className="shelf-link">
-                  View
-                </Link>
-              </li>
+              <Shelf
+                key={shelf._id}
+                shelf={shelf}
+                handleRemoveShelf={handleRemoveShelf}
+                isRemoving={shelfRemovingId === shelf._id}
+                isCollapsing={shelfCollapsingId === shelf._id}
+              />
             ))}
           </ul>
+        )}
+        {toastMessage && (
+          <Toast message={toastMessage} onClose={() => setToastMessage("")} />
         )}
       </section>
     </article>

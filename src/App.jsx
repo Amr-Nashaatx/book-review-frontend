@@ -7,6 +7,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Books from "./pages/Books.jsx";
 import BookDetail from "./pages/BookDetail.jsx";
 import BookForm from "./pages/BookForm.jsx";
+import ShelfDetail from "./pages/ShelfDetail";
 
 export default function App() {
   return (

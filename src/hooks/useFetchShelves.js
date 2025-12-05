@@ -1,22 +1,17 @@
 import { useState } from "react";
 import { sendRequest } from "../utils/sendRequest";
+import { useFetch } from "./useFetch";
 
 export const useFetchShelves = () => {
+  const { isLoading, error, fetchData } = useFetch();
   const [shelves, setShelves] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
 
   async function fetchShelves(params = {}) {
-    try {
-      setIsLoading(true);
-      const { shelves } = await sendRequest("/shelves", "get", params);
-      setIsLoading(false);
-      setShelves(shelves);
-    } catch (error) {
-      console.error(error);
-      setError(error.message ? error.message : "Error fetching shelves!");
-    }
+    await fetchData(
+      () => sendRequest({ url: "/shelves", method: "get", params }),
+      (data) => setShelves(data.shelves)
+    );
   }
 
-  return { fetchShelves, shelves, isLoading, error };
+  return { fetchShelves, shelves, setShelves, isLoading, error };
 };

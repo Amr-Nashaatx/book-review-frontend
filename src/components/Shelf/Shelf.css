@@ -1,0 +1,36 @@
+/* Shelf card styling */
+.shelf-card {
+  padding: 1rem;
+  border: 1px solid var(--pico-muted-border-color);
+  border-radius: var(--pico-border-radius);
+  background: var(--pico-card-background-color);
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  transition: opacity 0.6s ease;
+  animation: shelfCardEnter 0.5s ease forwards;
+}
+
+.shelf-card strong {
+  font-size: 1.1rem;
+}
+.shelf-link {
+  margin-top: 0.5rem;
+  align-self: flex-start;
+}
+.shelf-actions {
+  display: flex;
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+@keyframes shelfCardEnter {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}

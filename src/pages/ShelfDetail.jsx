@@ -1,41 +1,57 @@
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useFetchShelf } from "../hooks/useFetchShelf";
-import axios from "axios";
-import { API_BASE_URL } from "../constants";
 import Error from "../components/Error";
-import BookList from "../components/BookList";
-import Button from "../components/Button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import ShelfBook from "../components/ShelfBook/ShelfBook";
+import { sendRequest } from "../utils/sendRequest";
+import Toast from "../components/Toast/Toast";
+import { useListAnimation } from "../hooks/useListAnimation";
 
 export default function ShelfDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const { shelf, books, isLoading, error } = useFetchShelf(id);
+  const { fetchShelf, shelf, setShelf, isLoading } = useFetchShelf();
+  const [toastMessage, setToastMessage] = useState("");
 
-  const [removingBookId, setRemovingBookId] = useState(null);
+  const [actionError, setActionError] = useState("");
+  const {
+    removingId: removingBookId,
+    collapsingId: collapsingBookId,
+    handleRemove: animateRemoveBook,
+  } = useListAnimation();
 
-  if (isLoading) return <p>Loading shelf...</p>;
-  if (error) return <Error message={error} />;
-  if (!shelf) return <p>Not found.</p>;
+  useEffect(() => {
+    if (id) fetchShelf(id);
+  }, [id]);
 
   const handleRemoveBook = async (bookId) => {
-    setRemovingBookId(bookId);
+    const prevShelf = shelf;
     try {
-      await axios.delete(`${API_BASE_URL}/shelves/${id}/books/${bookId}`, {
-        withCredentials: true,
+      await animateRemoveBook(bookId, async () => {
+        setShelf({
+          ...shelf,
+          books: shelf.books.filter((b) => b._id !== bookId),
+        });
+        setActionError("");
+        await sendRequest({
+          url: `/shelves/${id}/books/${bookId}`,
+          method: "delete",
+          params: {
+            withCredentials: true,
+          },
+        });
+        setToastMessage("Removed book from shelf.");
       });
-
-      setData((prev) => ({
-        ...prev,
-        books: prev.books.filter((b) => b.id !== bookId),
-      }));
     } catch (err) {
-      setError("Failed to remove book.");
-    } finally {
-      setRemovingBookId(null);
+      console.log(err);
+      setShelf(prevShelf);
+      setActionError("Failed to remove book.");
     }
   };
+
+  if (isLoading) return <p>Loading shelf...</p>;
+  if (!shelf) return <p>Shelf not found.</p>;
 
   const handleAddBooks = () => {
     navigate(`/books?addToShelf=${id}`);
@@ -51,61 +67,33 @@ export default function ShelfDetail() {
           </p>
         )}
         <p style={{ marginTop: "0.5rem", fontStyle: "italic" }}>
-          {books.length} book{books.length === 1 ? "" : "s"}
+          {shelf.books.length} book{shelf.books.length === 1 ? "" : "s"}
         </p>
 
-        <Button variant="primary" onClick={handleAddBooks}>
-          Add Books
-        </Button>
+        <button onClick={handleAddBooks}>Add Books</button>
       </header>
 
       <section>
-        {books.length === 0 ? (
+        {shelf.books.length === 0 ? (
           <p>This shelf is empty.</p>
         ) : (
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
-              gap: "1rem",
-            }}
-          >
-            {books.map((book) => (
-              <article
-                key={book.id}
-                style={{
-                  padding: "1rem",
-                  border: "1px solid var(--pico-muted-border-color)",
-                  borderRadius: "0.5rem",
-                }}
-              >
-                <h3>{book.title}</h3>
-                <p style={{ marginBottom: "0.5rem" }}>by {book.author}</p>
-
-                <div style={{ display: "flex", gap: "0.5rem" }}>
-                  <Link
-                    to={`/books/${book.id}`}
-                    className="secondary"
-                    role="button"
-                  >
-                    View
-                  </Link>
-
-                  <button
-                    className="danger"
-                    disabled={removingBookId === book.id}
-                    onClick={() => handleRemoveBook(book.id)}
-                  >
-                    {removingBookId === book.id ? "Removing..." : "Remove"}
-                  </button>
-                </div>
-              </article>
+          <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+            {shelf.books.map((book) => (
+              <ShelfBook
+                key={book._id}
+                book={book}
+                handleRemoveBook={handleRemoveBook}
+                isRemoving={removingBookId === book._id}
+                isCollapsing={collapsingBookId === book._id}
+              />
             ))}
-          </div>
+          </ul>
         )}
       </section>
-
-      {error && <Error message={error} />}
+      {toastMessage && (
+        <Toast message={toastMessage} onClose={() => setToastMessage("")} />
+      )}
+      {actionError && <Error message={actionError} />}
     </article>
   );
 }

@@ -1,31 +1,30 @@
 import { useState } from "react";
 import { sendRequest } from "../utils/sendRequest";
+import { useFetch } from "./useFetch";
 
 export const useFetchReviews = () => {
+  const { isLoading, error, fetchData } = useFetch();
   const [reviews, setReviews] = useState([]);
   const [pageInfo, setPageInfo] = useState();
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
 
   async function fetchReviews(bookId, params = {}) {
-    try {
-      setIsLoading(true);
-      const { reviews, pageInfo } = await sendRequest(
-        `/reviews/book/${bookId}/reviews?limit=6`,
-        "get",
-        params
-      );
-      setIsLoading(false);
-      if (params.after) {
-        setReviews((prev) => [...prev, ...reviews]);
-      } else {
-        setReviews(reviews);
+    await fetchData(
+      () =>
+        sendRequest({
+          url: `/reviews/book/${bookId}/reviews?limit=6`,
+          method: "get",
+          params,
+        }),
+      (data) => {
+        const { reviews, pageInfo } = data;
+        if (params.after) {
+          setReviews((prev) => [...prev, ...reviews]);
+        } else {
+          setReviews(reviews);
+        }
+        setPageInfo(pageInfo);
       }
-      setPageInfo(pageInfo);
-    } catch (error) {
-      console.error(error);
-      setError(error.message ? error.message : "Error fetching reviews!");
-    }
+    );
   }
 
   return { fetchReviews, reviews, pageInfo, isLoading, error };

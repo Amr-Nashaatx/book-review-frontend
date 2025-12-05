@@ -1,0 +1,37 @@
+.toast {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  background: var(--pico-primary-background, #333);
+  color: white;
+  padding: 0.75rem 1.25rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+  animation: toastIn 300ms ease forwards;
+}
+
+@keyframes toastIn {
+  from {
+    transform: translateY(50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.toast-closing {
+  animation: toastOut 500ms ease forwards;
+}
+
+@keyframes toastOut {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(50px);
+    opacity: 0;
+  }
+}
