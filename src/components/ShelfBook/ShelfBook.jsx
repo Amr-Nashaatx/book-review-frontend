@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import "./ShelfBook.css";
-import AnimatedListItem from "../AnimatedListItem";
+import AnimatedListItem from "../AnimateListItem/AnimatedListItem";
 
 export default function ShelfBook({
   book,
@@ -13,13 +13,6 @@ export default function ShelfBook({
       key={book._id}
       isRemoving={isRemoving}
       isCollapsing={isCollapsing}
-      style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        padding: "0.75rem 1rem",
-        borderBottom: "1px solid var(--pico-muted-border-color)",
-      }}
       className="shelf-book"
     >
       <div>

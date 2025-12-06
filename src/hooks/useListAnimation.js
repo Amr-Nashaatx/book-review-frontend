@@ -14,9 +14,7 @@ export const useListAnimation = (
     await new Promise((resolve) => setTimeout(resolve, collapseDuration));
 
     // Call the actual remove function
-    if (onRemove) {
-      await onRemove(id);
-    }
+    await onRemove(id);
 
     setRemovingId(null);
     setCollapsingId(null);

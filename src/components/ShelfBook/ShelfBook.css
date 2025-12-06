@@ -1,9 +1,12 @@
-/* Shelf Book Animation */
 .shelf-book {
   opacity: 0;
-  transform: translateY(20px);
   animation: shelfBookEnter 0.5s ease forwards;
   transition: opacity 0.5s ease-out;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--pico-muted-border-color);
 }
 
 .shelf-book:nth-child(1) {
@@ -23,6 +26,10 @@
 }
 
 @keyframes shelfBookEnter {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
   to {
     opacity: 1;
     transform: translateY(0);

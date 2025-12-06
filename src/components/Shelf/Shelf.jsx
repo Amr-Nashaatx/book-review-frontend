@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import "./Shelf.css";
-import AnimatedListItem from "../AnimatedListItem";
+import AnimatedListItem from "../AnimateListItem/AnimatedListItem";
 
 export default function Shelf({
   shelf,

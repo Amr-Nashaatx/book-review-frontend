@@ -30,10 +30,9 @@ export default function ShelfDetail() {
     try {
       await animateRemoveBook(bookId, async () => {
         setShelf({
-          ...shelf,
-          books: shelf.books.filter((b) => b._id !== bookId),
+          ...prevShelf,
+          books: prevShelf.books.filter((b) => b._id !== bookId),
         });
-        setActionError("");
         await sendRequest({
           url: `/shelves/${id}/books/${bookId}`,
           method: "delete",
@@ -41,6 +40,7 @@ export default function ShelfDetail() {
             withCredentials: true,
           },
         });
+        console.log("Setting the toast message");
         setToastMessage("Removed book from shelf.");
       });
     } catch (err) {
@@ -78,15 +78,31 @@ export default function ShelfDetail() {
           <p>This shelf is empty.</p>
         ) : (
           <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
-            {shelf.books.map((book) => (
-              <ShelfBook
-                key={book._id}
-                book={book}
-                handleRemoveBook={handleRemoveBook}
-                isRemoving={removingBookId === book._id}
-                isCollapsing={collapsingBookId === book._id}
-              />
-            ))}
+            {shelf.books.map((book) => {
+              if (removingBookId) {
+                console.log(
+                  "the Book that should be removed is: ",
+                  removingBookId
+                );
+                console.log(
+                  "the Book that should be collapsed is: ",
+                  collapsingBookId
+                );
+                console.log("My Book Id is: ", book._id);
+
+                console.log("Is removing: ", removingBookId === book._id);
+                console.log("Is collapsing: ", collapsingBookId === book._id);
+              }
+              return (
+                <ShelfBook
+                  key={book._id}
+                  book={book}
+                  handleRemoveBook={handleRemoveBook}
+                  isRemoving={removingBookId === book._id}
+                  isCollapsing={collapsingBookId === book._id}
+                />
+              );
+            })}
           </ul>
         )}
       </section>
