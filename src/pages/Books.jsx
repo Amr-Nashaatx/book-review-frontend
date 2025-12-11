@@ -1,11 +1,22 @@
 import Error from "../components/Error";
 import BookList from "../components/BookList";
 import Pagination from "../components/Pagination";
-import { useEffect, useRef, useState } from "react";
 import BookFilters from "../components/BookFilters";
+import Toast from "../components/Toast/Toast";
+
+import { useEffect, useRef, useState } from "react";
 import { useBooksStore } from "../stores/booksStore";
+import { useSearchParams } from "react-router-dom";
+import { sendRequest } from "../utils/sendRequest";
+import { useNavigate } from "react-router-dom";
 
 export default function Books() {
+  //detect selection mode
+  const [params] = useSearchParams();
+  const addToShelfId = params.get("addToShelf");
+  const selectionMode = Boolean(addToShelfId);
+  // toast
+  const [toastMessage, setToastMessage] = useState("");
   // state
   const booksData = useBooksStore((s) => s.booksData);
   const isLoading = useBooksStore((s) => s.isLoading);
@@ -18,6 +29,7 @@ export default function Books() {
 
   const [isFirstPage, setIsFirstPage] = useState(true);
   const containerRef = useRef(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     getGenres();
@@ -33,6 +45,22 @@ export default function Books() {
   const onApplyFilters = async (pendingFilters) => {
     setIsFirstPage(true);
     await fetchBooks(pendingFilters);
+  };
+
+  const onAddBookToShelf = async (bookId) => {
+    try {
+      await sendRequest({
+        url: `/shelves/${addToShelfId}/books`,
+        method: "post",
+        body: { bookId },
+        params: { withCredentials: true },
+      });
+      setToastMessage("Book added to shelf.");
+      navigate(`/shelves/${addToShelfId}`);
+    } catch (error) {
+      console.log(error);
+      setToastMessage("Failed to add book.");
+    }
   };
 
   const onLoadMore = async () => {
@@ -72,7 +100,11 @@ export default function Books() {
         {isLoading && isFirstPage ? (
           <p>Loading books...</p>
         ) : (
-          <BookList books={booksData?.books || []} />
+          <BookList
+            books={booksData?.books || []}
+            selectionMode={selectionMode}
+            onAddBookToShelf={onAddBookToShelf}
+          />
         )}
 
         <Pagination
@@ -81,7 +113,7 @@ export default function Books() {
           onLoadMore={onLoadMore}
         />
       </div>
-
+      {toastMessage && <Toast message={toastMessage} />}
       {error && <Error message={error} />}
     </article>
   );

@@ -1,6 +1,6 @@
 import BookCard from "./BookCard";
 
-export default function BookList({ books }) {
+export default function BookList({ books, selectionMode, onAddBookToShelf }) {
   return (
     <div
       style={{
@@ -11,7 +11,12 @@ export default function BookList({ books }) {
       }}
     >
       {books.map((book) => (
-        <BookCard key={book._id} book={book} />
+        <BookCard
+          key={book._id}
+          book={book}
+          selectionMode={selectionMode}
+          onAddBookToShelf={onAddBookToShelf}
+        />
       ))}
     </div>
   );

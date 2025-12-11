@@ -58,8 +58,8 @@ export default function ShelfDetail() {
   };
 
   return (
-    <article style={{ padding: "2rem 4rem" }}>
-      <header style={{ marginBottom: "1.5rem" }}>
+    <article style={{ padding: "4rem" }}>
+      <header style={{ marginBottom: "1.5rem", padding: "2rem" }}>
         <h2>{shelf.name}</h2>
         {shelf.description && (
           <p style={{ opacity: 0.8, marginTop: "0.5rem" }}>
@@ -79,20 +79,6 @@ export default function ShelfDetail() {
         ) : (
           <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
             {shelf.books.map((book) => {
-              if (removingBookId) {
-                console.log(
-                  "the Book that should be removed is: ",
-                  removingBookId
-                );
-                console.log(
-                  "the Book that should be collapsed is: ",
-                  collapsingBookId
-                );
-                console.log("My Book Id is: ", book._id);
-
-                console.log("Is removing: ", removingBookId === book._id);
-                console.log("Is collapsing: ", collapsingBookId === book._id);
-              }
               return (
                 <ShelfBook
                   key={book._id}

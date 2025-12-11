@@ -3,6 +3,9 @@ import { useAuthStore } from "../stores/authStore";
 import { useBooksStore } from "../stores/booksStore";
 import { renderStars } from "../utils/renderStars";
 import Reviews from "../components/Review";
+import { useFetchShelves } from "../hooks/useFetchShelves";
+import { useEffect } from "react";
+import AddToShelfDropdown from "../components/AddToShelfDropdown/AddToShelfDropdown";
 
 export default function BookDetail() {
   const { id } = useParams();
@@ -14,6 +17,9 @@ export default function BookDetail() {
   const isLoading = useBooksStore((s) => s.isLoading);
   const deleteBook = useBooksStore((s) => s.deleteBook);
 
+  //shelves
+  const { fetchShelves, shelves } = useFetchShelves();
+
   const { isLoggedIn, currentUser } = useAuthStore();
 
   const isOwner = isLoggedIn && currentUser?.id === book.createdBy;
@@ -23,6 +29,10 @@ export default function BookDetail() {
     await deleteBook();
     navigate("/books");
   };
+
+  useEffect(() => {
+    fetchShelves({ withCredentials: true });
+  }, []);
 
   if (isLoading) return <p>Loading book...</p>;
   return (
@@ -56,6 +66,7 @@ export default function BookDetail() {
         <dd>{book.description}</dd>
       </dl>
       <footer style={{ marginTop: "2rem", padding: "2rem 4rem" }}>
+        <AddToShelfDropdown shelves={shelves} book={book} />
         {isOwner && (
           <div
             style={{
