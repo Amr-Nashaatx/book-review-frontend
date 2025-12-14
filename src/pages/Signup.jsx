@@ -2,8 +2,10 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import Error from "../components/Error";
 import { useSubmitForm } from "../hooks/useSubmitForm";
+import { useNavigate } from "react-router-dom";
 
 export default function Signup() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -11,8 +13,7 @@ export default function Signup() {
   });
   const { formErrors, submitForm } = useSubmitForm(
     ["name", "email", "password"],
-    "/auth/register",
-    "/profile"
+    "/auth/register"
   );
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -21,6 +22,7 @@ export default function Signup() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     await submitForm(formData);
+    navigate("/profile");
   };
 
   return (

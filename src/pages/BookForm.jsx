@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSubmitForm } from "../hooks/useSubmitForm";
 import Error from "../components/Error";
-import { useParams } from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { API_BASE_URL } from "../constants";
 
@@ -17,12 +17,9 @@ export default function BookForm({ mode = "create" }) {
     publishedYear: 0,
   });
 
-  const redirectPath = isEdit ? `/books/${id}` : "/books";
-
   const { isLoading, submitForm, formErrors } = useSubmitForm(
     ["title", "author", "genre", "description", "publishedYear"],
     isEdit ? `/books/${id}` : "/books",
-    redirectPath,
     isEdit // if true, use PUT instead of POST
   );
 
@@ -42,6 +39,8 @@ export default function BookForm({ mode = "create" }) {
     fetchBook();
   }, [isEdit, id]);
 
+  const navigate = useNavigate();
+
   const handleChange = (e) => {
     setBook({ ...book, [e.target.name]: e.target.value });
   };
@@ -49,15 +48,16 @@ export default function BookForm({ mode = "create" }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     await submitForm(book);
+    isEdit ? navigate(`/books/${id}`, { state: { book } }) : navigate("/books");
   };
 
   return (
     <article>
-      <header>
+      <header style={{ padding: "2rem 5rem" }}>
         <h2>{isEdit ? "Edit Book" : "Add a New Book"}</h2>
       </header>
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} style={{ padding: "2rem 4rem" }}>
         <label>
           Title
           <input
@@ -97,6 +97,7 @@ export default function BookForm({ mode = "create" }) {
             name="description"
             value={book.description}
             onChange={handleChange}
+            contentEditable={false}
             required
           />
         </label>
@@ -115,7 +116,6 @@ export default function BookForm({ mode = "create" }) {
         {formErrors.publishedYear && (
           <Error message={formErrors.publishedYear} />
         )}
-
         <button type="submit" disabled={isLoading}>
           {isEdit
             ? isLoading

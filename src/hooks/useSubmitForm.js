@@ -1,6 +1,5 @@
 import axios from "axios";
 import { useAuthStore } from "../stores/authStore";
-import { useNavigate } from "react-router-dom";
 import { API_BASE_URL } from "../constants";
 import { useState } from "react";
 
@@ -20,11 +19,10 @@ const sendRequest = async (url, formData, isEdit = false) => {
   return res.data.data;
 };
 
-export const useSubmitForm = (fields, url, navTo = "/", isEdit = false) => {
+export const useSubmitForm = (fields, url, isEdit = false) => {
   const [isLoading, setIsLoading] = useState(false);
 
   let errorFields = {};
-  const navigate = useNavigate();
   for (let field of fields) {
     errorFields[field] = "";
   }
@@ -48,7 +46,6 @@ export const useSubmitForm = (fields, url, navTo = "/", isEdit = false) => {
         login(data.user);
       }
       setIsLoading(false);
-      navigate(navTo);
     } catch (error) {
       const responseData = error.response ? error.response.data : null;
       if (responseData?.errors) {

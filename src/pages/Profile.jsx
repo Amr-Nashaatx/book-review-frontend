@@ -7,9 +7,13 @@ import { sendRequest } from "../utils/sendRequest";
 import { Navigate, useNavigate } from "react-router-dom";
 import Toast from "../components/Toast/Toast";
 import Shelf from "../components/Shelf/Shelf";
+import BookCard from "../components/BookCard/BookCard";
+
+import { useFetchMyBooks } from "../hooks/useFetchMyBooks";
 
 export default function Profile() {
   const { fetchShelves, shelves, setShelves } = useFetchShelves();
+  const { fetchMyBooks, myBooks } = useFetchMyBooks();
   const [isNewShelfModalOpen, setIsNewShelfModalOpen] = useState(false);
   const {
     removingId: shelfRemovingId,
@@ -58,7 +62,8 @@ export default function Profile() {
     handleCreateShelf({ name, description });
   };
   useEffect(() => {
-    fetchShelves({ withCredentials: true });
+    fetchShelves();
+    fetchMyBooks();
   }, []);
 
   if (!isLoggedIn) {
@@ -114,6 +119,13 @@ export default function Profile() {
         {toastMessage && (
           <Toast message={toastMessage} onClose={() => setToastMessage("")} />
         )}
+      </section>
+      <section className="mybooks">
+        <h2>My Books</h2>
+        {!myBooks.length && <p>You have not published any book yet.</p>}
+        {myBooks.map((book) => (
+          <BookCard book={book} key={book._id} bookData={book} />
+        ))}
       </section>
     </article>
   );

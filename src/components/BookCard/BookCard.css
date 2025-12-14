@@ -1,0 +1,35 @@
+.book-card {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--pico-muted-border-color);
+  border-radius: 0.5rem;
+  text-decoration: none;
+  overflow: hidden;
+  height: 100%;
+}
+
+.book-card-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.book-card-content {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.book-card-title {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.book-card-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: 1rem;
+}

@@ -6,7 +6,7 @@ export const useFetchShelves = () => {
   const { isLoading, error, fetchData } = useFetch();
   const [shelves, setShelves] = useState([]);
 
-  async function fetchShelves(params = {}) {
+  async function fetchShelves(params = { withCredentials: true }) {
     await fetchData(
       () => sendRequest({ url: "/shelves", method: "get", params }),
       (data) => setShelves(data.shelves)

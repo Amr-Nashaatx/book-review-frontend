@@ -20,6 +20,19 @@ export const useBooksStore = create(
 
         setError: (err) => set({ error: err?.message || String(err) }),
         setIsLoading: (val) => set({ isLoading: val }),
+        deleteBook: async (id) => {
+          try {
+            set({ isLoading: true, error: "" });
+            await sendRequest({
+              url: `/books/${id}`,
+              method: "delete",
+            });
+            set({ isLoading: false });
+          } catch (err) {
+            set({ isLoading: false, error: err?.message || String(err) });
+            throw err;
+          }
+        },
         setFilters: (next) => set({ filters: { ...get().filters, ...next } }),
         clearFilters: () =>
           set({

@@ -2,8 +2,10 @@ import { useState } from "react";
 import Error from "../components/Error";
 
 import { useSubmitForm } from "../hooks/useSubmitForm";
+import { useNavigate } from "react-router-dom";
 
 export default function Login() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -11,8 +13,7 @@ export default function Login() {
 
   const { formErrors, submitForm } = useSubmitForm(
     ["email", "password"],
-    "/auth/login",
-    "/profile"
+    "/auth/login"
   );
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -21,6 +22,7 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     await submitForm(formData);
+    navigate("/profile");
   };
 
   return (

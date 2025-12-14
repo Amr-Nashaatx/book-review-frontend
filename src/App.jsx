@@ -8,8 +8,22 @@ import Books from "./pages/Books.jsx";
 import BookDetail from "./pages/BookDetail.jsx";
 import BookForm from "./pages/BookForm.jsx";
 import ShelfDetail from "./pages/ShelfDetail";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuthStore } from "./stores/authStore";
 
 export default function App() {
+  const navigate = useNavigate();
+  const { logout } = useAuthStore();
+  useEffect(() => {
+    const handler = () => {
+      logout();
+      navigate("/login");
+    };
+
+    window.addEventListener("auth:expired", handler);
+    return () => window.removeEventListener("auth:expired", handler);
+  }, []);
   return (
     <Routes>
       <Route path="/" element={<Layout />}>
