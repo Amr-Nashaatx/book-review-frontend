@@ -1,13 +1,32 @@
 import axios from "axios";
 import { API_BASE_URL } from "../constants";
 
-const axiosInstance = axios.create();
+const axiosInstance = axios.create({ withCredentials: true });
 
 axiosInstance.interceptors.response.use(
   (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
-      window.dispatchEvent(new Event("auth:expired"));
+  async (error) => {
+    const originalRequest = error.config;
+    const isRefreshRequest = originalRequest.url.includes("/auth/refresh");
+
+    if (
+      error.response?.status === 401 &&
+      !originalRequest._retry &&
+      !isRefreshRequest
+    ) {
+      originalRequest._retry = true;
+
+      try {
+        await axiosInstance.post(
+          `${API_BASE_URL}/auth/refresh`,
+          {},
+          { withCredentials: true }
+        );
+        return axiosInstance(originalRequest);
+      } catch (err) {
+        window.dispatchEvent(new Event("auth:expired"));
+        return Promise.reject(err);
+      }
     }
     return Promise.reject(error);
   }
