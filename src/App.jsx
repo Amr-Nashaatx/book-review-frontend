@@ -11,6 +11,8 @@ import ShelfDetail from "./pages/ShelfDetail";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "./stores/authStore";
+import { OnBoarding } from "./pages/OnBoarding.jsx";
+import { AuthorDashboard } from "./pages/AuthorDashboard.jsx";
 
 export default function App() {
   const navigate = useNavigate();
@@ -52,6 +54,24 @@ export default function App() {
           element={
             <ProtectedRoute>
               <BookForm mode="edit" />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="author/onboarding"
+          element={
+            <ProtectedRoute>
+              <OnBoarding />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="author/dashboard"
+          element={
+            <ProtectedRoute>
+              <AuthorDashboard />
             </ProtectedRoute>
           }
         />

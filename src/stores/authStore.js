@@ -7,14 +7,15 @@ export const useAuthStore = create(
       (set) => ({
         isLoggedIn: false,
         currentUser: {},
-
+        isAuthor: false,
         login: (user) => set({ isLoggedIn: true, currentUser: user }),
         logout: () => set({ isLoggedIn: false, currentUser: {} }),
-        setCurrentUser: (user) => set({ currentUser: user }),
+        setCurrentUser: (user) =>
+          set({ currentUser: user, isAuthor: user.isAuthor }),
       }),
       {
         name: "auth-storage",
-      }
-    )
-  )
+      },
+    ),
+  ),
 );

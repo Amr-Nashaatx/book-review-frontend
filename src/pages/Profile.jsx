@@ -10,20 +10,33 @@ import Shelf from "../components/Shelf/Shelf";
 import BookCard from "../components/BookCard/BookCard";
 
 import { useFetchMyBooks } from "../hooks/useFetchMyBooks";
+import { useFetchCurrentAuthor } from "../hooks/useFetchCurrentAuthorjs";
+import EditableField from "../components/EditableField";
+
+const rowStyle = {
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  marginBottom: "10px",
+  minHeight: "40px",
+};
 
 export default function Profile() {
+  const [isNewShelfModalOpen, setIsNewShelfModalOpen] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+
   const { fetchShelves, shelves, setShelves } = useFetchShelves();
   const { fetchMyBooks, myBooks } = useFetchMyBooks();
-  const [isNewShelfModalOpen, setIsNewShelfModalOpen] = useState(false);
+  const { currentUser, isLoggedIn, setCurrentUser } = useAuthStore();
+  const { fetchCurrentAuthor, author } = useFetchCurrentAuthor();
+
+  const navigate = useNavigate();
+
   const {
     removingId: shelfRemovingId,
     collapsingId: shelfCollapsingId,
     handleRemove: animateRemoveShelf,
   } = useListAnimation();
-
-  const { currentUser, isLoggedIn } = useAuthStore();
-  const [toastMessage, setToastMessage] = useState("");
-  const navigate = useNavigate();
 
   const handleCreateShelf = async ({ name, description }) => {
     try {
@@ -36,11 +49,22 @@ export default function Profile() {
       setToastMessage("Shelf created successfully.");
       setIsNewShelfModalOpen(false);
       navigate(`/shelves/${shelf._id}`);
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   };
 
+  const updateField = async (fieldName, newValue) => {
+    try {
+      const { user: newUser } = await sendRequest({
+        url: `/users/${currentUser.id}`,
+        method: "put",
+        body: { [fieldName]: newValue },
+      });
+      setCurrentUser(newUser);
+      setToastMessage(`${fieldName} updated successfully.`);
+    } catch (error) {
+      setToastMessage("Failed to update.");
+    }
+  };
   const handleRemoveShelf = async (shelfId) => {
     const previousShelves = [...shelves];
     try {
@@ -64,50 +88,172 @@ export default function Profile() {
   useEffect(() => {
     fetchShelves();
     fetchMyBooks();
-  }, []);
+    if (currentUser.isAuthor) {
+      fetchCurrentAuthor();
+    }
+  }, [currentUser]);
 
+  const updateAuthorField = async (fieldName, newValue) => {
+    try {
+      const body = fieldName.includes(".")
+        ? {
+            [fieldName.split(".")[0]]: {
+              ...author[fieldName.split(".")[0]],
+              [fieldName.split(".")[1]]: newValue,
+            },
+          }
+        : { [fieldName]: newValue };
+
+      await sendRequest({
+        url: `/authors/me`,
+        method: "put",
+        body,
+      });
+      fetchCurrentAuthor();
+      setToastMessage(`${fieldName.split(".").pop()} updated successfully.`);
+    } catch (error) {
+      setToastMessage("Failed to update.");
+    }
+  };
+  const updateAuthorBio = async (newBio) => {
+    try {
+      await sendRequest({
+        url: `/authors/me`,
+        method: "put",
+        body: { bio: newBio },
+      });
+      fetchCurrentAuthor();
+      setToastMessage("Bio updated successfully.");
+    } catch (error) {
+      setToastMessage("Failed to update bio.");
+    }
+  };
   if (!isLoggedIn) {
     return <Navigate to="/login" />;
   }
-  return (
-    <article className="main-content">
-      <header style={{ textAlign: "center", padding: "2rem" }}>
-        <h2>Your Profile</h2>
-        <p>Welcome back, {currentUser.name}!</p>
-      </header>
-      <section className="profile-card">
-        <dl>
-          <div className="row">
-            <dt>Name: </dt>
-            <dd>{currentUser.name}</dd>
-          </div>
+  if (!isLoggedIn) return <Navigate to="/login" />;
 
-          <div className="row">
-            <dt>Email: </dt>
-            <dd>{currentUser.email}</dd>
-          </div>
-        </dl>
-      </section>
-      <hr />
-      <section className="shelves">
-        <h2>Shelves</h2>
-        <button onClick={() => setIsNewShelfModalOpen(true)}>
-          New Shelf +
-        </button>
-        {isNewShelfModalOpen && (
-          <NewShelfModal
-            onClose={() => setIsNewShelfModalOpen(false)}
-            onCreate={onCreateShelf}
-          />
-        )}
-        {shelves && (
-          <ul
-            className="shelf-list"
-            style={{ listStyle: "none", marginTop: "2rem" }}
+  return (
+    <main className="container">
+      <hgroup style={{ textAlign: "center", marginBottom: "3rem" }}>
+        <h1>Your Profile</h1>
+        Welcome back,
+        <EditableField
+          value={currentUser.name}
+          onSave={(val) => updateField("name", val)}
+        />
+        !
+      </hgroup>
+
+      <div className="grid">
+        <article>
+          <header>
+            <strong>Account Details</strong>
+          </header>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              marginBottom: "10px",
+            }}
           >
+            <span>
+              <strong>Name:</strong>
+            </span>
+            <span>
+              {currentUser.name}{" "}
+              {currentUser.isAuthor && author && `(${author.penName})`}
+            </span>
+          </div>
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <span>
+              <strong>Email:</strong>
+            </span>
+            <span>{currentUser.email}</span>
+          </div>
+          {currentUser.isAuthor && (
+            <footer>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "0.5rem",
+                }}
+              >
+                <strong>Bio:</strong>
+                <EditableField
+                  type="textarea"
+                  value={author.bio}
+                  onSave={updateAuthorBio}
+                />
+              </div>
+            </footer>
+          )}
+        </article>
+        {currentUser.isAuthor && author && (
+          <article>
+            <header>
+              <strong>Social Presence</strong>
+            </header>
+            <div style={rowStyle}>
+              <span>
+                <strong>Website:</strong>
+              </span>
+              <EditableField
+                value={author.socialLinks?.website}
+                onSave={(v) => updateAuthorField("socialLinks.website", v)}
+              />
+            </div>
+            <div style={rowStyle}>
+              <span>
+                <strong>X (Twitter):</strong>
+              </span>
+              <EditableField
+                value={author.socialLinks?.x}
+                onSave={(v) => updateAuthorField("socialLinks.x", v)}
+              />
+            </div>
+            <div style={rowStyle}>
+              <span>
+                <strong>Instagram:</strong>
+              </span>
+              <EditableField
+                value={author.socialLinks?.instagram}
+                onSave={(v) => updateAuthorField("socialLinks.instagram", v)}
+              />
+            </div>
+            <div style={rowStyle}>
+              <span>
+                <strong>LinkedIn:</strong>
+              </span>
+              <EditableField
+                value={author.socialLinks?.linkedIn}
+                onSave={(v) => updateAuthorField("socialLinks.linkedIn", v)}
+              />
+            </div>
+          </article>
+        )}
+      </div>
+
+      <hr />
+
+      <div className="grid">
+        <section>
+          <h2>Shelves</h2>
+          <p>Create new shelves to organize your reading list.</p>
+          <button
+            className="contrast"
+            style={{ marginBottom: "2rem" }}
+            onClick={() => setIsNewShelfModalOpen(true)}
+          >
+            New Shelf +
+          </button>
+          {shelves?.length === 0 && <p>You haven't created any shelves yet.</p>}
+          <ul style={{ listStyle: "none", padding: 0 }}>
             {shelves.map((shelf) => (
               <Shelf
                 key={shelf._id}
+                style={{ marginBottom: "1rem" }}
                 shelf={shelf}
                 handleRemoveShelf={handleRemoveShelf}
                 isRemoving={shelfRemovingId === shelf._id}
@@ -115,18 +261,33 @@ export default function Profile() {
               />
             ))}
           </ul>
+        </section>
+
+        {currentUser.isAuthor && (
+          <section>
+            <h2>Published Books</h2>
+            {!myBooks.length ? (
+              <p className="secondary">No books published yet.</p>
+            ) : (
+              <div style={{ display: "grid", gap: "1rem" }}>
+                {myBooks.map((book) => (
+                  <BookCard book={book} key={book._id} bookData={book} />
+                ))}
+              </div>
+            )}
+          </section>
         )}
-        {toastMessage && (
-          <Toast message={toastMessage} onClose={() => setToastMessage("")} />
-        )}
-      </section>
-      <section className="mybooks">
-        <h2>My Books</h2>
-        {!myBooks.length && <p>You have not published any book yet.</p>}
-        {myBooks.map((book) => (
-          <BookCard book={book} key={book._id} bookData={book} />
-        ))}
-      </section>
-    </article>
+      </div>
+
+      {isNewShelfModalOpen && (
+        <NewShelfModal
+          onClose={() => setIsNewShelfModalOpen(false)}
+          onCreate={onCreateShelf}
+        />
+      )}
+      {toastMessage && (
+        <Toast message={toastMessage} onClose={() => setToastMessage("")} />
+      )}
+    </main>
   );
 }

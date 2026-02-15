@@ -1,12 +1,7 @@
 import { Link } from "react-router-dom";
 import "./BookCard.css";
 
-export default function BookCard({
-  book,
-  selectionMode,
-  onAddBookToShelf,
-  bookData = {},
-}) {
+export default function BookCard({ book, selectionMode, onAddBookToShelf }) {
   const CardContent = () => (
     <>
       {book.coverImage && (
@@ -53,7 +48,7 @@ export default function BookCard({
       key={book._id}
       to={`/books/${book._id}`}
       className="book-card"
-      state={{ book: bookData }}
+      state={{ book }}
     >
       <CardContent />
     </Link>

@@ -4,9 +4,8 @@ import { sendRequest } from "../utils/sendRequest";
 import { useBooksStore } from "../stores/booksStore";
 
 export default function Navbar() {
-  const { isLoggedIn, logout } = useAuthStore();
+  const { isLoggedIn, logout, currentUser } = useAuthStore();
   const clearStore = useBooksStore((s) => s.clearStore);
-
   const onLogoutClick = async () => {
     await sendRequest({ url: "/auth/logout", method: "post" });
     logout();
@@ -30,20 +29,19 @@ export default function Navbar() {
         </li>
         {isLoggedIn && (
           <>
+            {!currentUser.isAuthor && (
+              <li>
+                <Link to="/author/onboarding">
+                  <button>Become an Author</button>
+                </Link>
+              </li>
+            )}
             <li>
               <NavLink
                 to="/profile"
                 className={({ isActive }) => (isActive ? "active" : "")}
               >
                 Profile
-              </NavLink>
-            </li>
-            <li>
-              <NavLink
-                to="/books/new"
-                className={({ isActive }) => (isActive ? "active" : "")}
-              >
-                New Book
               </NavLink>
             </li>
             <li>

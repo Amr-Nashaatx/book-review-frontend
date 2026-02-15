@@ -1,28 +1,30 @@
 import { useState } from "react";
-import Error from "../components/Error";
 
 import { useSubmitForm } from "../hooks/useSubmitForm";
 import { useNavigate } from "react-router-dom";
+import ErrorMsg from "../components/ErrorMsg";
 
 export default function Login() {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
+  const [formData, setFormData] = useState({ email: "", password: "" });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { formErrors, submitForm } = useSubmitForm(
     ["email", "password"],
-    "/auth/login"
+    "/auth/login",
   );
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await submitForm(formData);
-    navigate("/profile");
+    setIsSubmitting(true);
+    const success = await submitForm(formData);
+    setIsSubmitting(false);
+
+    if (success) navigate("/profile");
   };
 
   return (
@@ -33,6 +35,7 @@ export default function Login() {
             <h1>Login</h1>
             <p>Welcome back! Continue discovering new books.</p>
           </header>
+
           <label htmlFor="email">
             Email Address
             <input
@@ -42,9 +45,11 @@ export default function Login() {
               placeholder="you@example.com"
               value={formData.email}
               onChange={handleChange}
+              // Stays neutral unless an error is present
+              aria-invalid={formErrors.email ? "true" : undefined}
               required
             />
-            {formErrors.email && <Error message={formErrors.email} />}
+            {formErrors.email && <ErrorMsg message={formErrors.email} />}
           </label>
 
           <label htmlFor="password">
@@ -56,13 +61,17 @@ export default function Login() {
               placeholder="********"
               value={formData.password}
               onChange={handleChange}
+              aria-invalid={formErrors.password ? "true" : undefined}
               required
-              minLength="6"
             />
-            {formErrors.password && <Error message={formErrors.password} />}
+            {formErrors.password && <ErrorMsg message={formErrors.password} />}
           </label>
-          {formErrors.general && <Error message={formErrors.general} />}
-          <button type="submit">Login</button>
+
+          {formErrors.general && <ErrorMsg message={formErrors.general} />}
+
+          <button type="submit" aria-busy={isSubmitting}>
+            {isSubmitting ? "Logging in..." : "Login"}
+          </button>
         </form>
       </article>
     </main>

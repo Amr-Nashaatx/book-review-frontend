@@ -1,0 +1,25 @@
+import { useState } from "react";
+import { sendRequest } from "../utils/sendRequest";
+import { useFetch } from "./useFetch";
+
+export const useFetchCurrentAuthor = () => {
+  const { isLoading, error, fetchData } = useFetch();
+  const [author, setAuthor] = useState([]);
+
+  async function fetchCurrentAuthor(params = { withCredentials: true }) {
+    await fetchData(
+      () =>
+        sendRequest({
+          url: `/authors/me`,
+          method: "get",
+          params,
+        }),
+      (data) => {
+        const { author } = data;
+        setAuthor(author);
+      },
+    );
+  }
+
+  return { fetchCurrentAuthor, setAuthor, author, isLoading, error };
+};

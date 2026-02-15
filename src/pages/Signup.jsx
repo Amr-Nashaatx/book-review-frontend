@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import Error from "../components/Error";
 import { useSubmitForm } from "../hooks/useSubmitForm";
 import { useNavigate } from "react-router-dom";
+import ErrorMsg from "../components/ErrorMsg";
 
 export default function Signup() {
   const navigate = useNavigate();
@@ -11,18 +11,24 @@ export default function Signup() {
     email: "",
     password: "",
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const { formErrors, submitForm } = useSubmitForm(
     ["name", "email", "password"],
-    "/auth/register"
+    "/auth/register",
   );
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await submitForm(formData);
-    navigate("/profile");
+    setIsSubmitting(true);
+    const success = await submitForm(formData);
+    setIsSubmitting(false);
+
+    if (success) navigate("/profile");
   };
 
   return (
@@ -33,6 +39,7 @@ export default function Signup() {
             <h1>Create an Account</h1>
             <p>Join our community of book lovers and share your reviews.</p>
           </header>
+
           <label htmlFor="name">
             Full Name
             <input
@@ -42,10 +49,12 @@ export default function Signup() {
               placeholder="Jane Doe"
               value={formData.name}
               onChange={handleChange}
+              aria-invalid={formErrors.name ? "true" : undefined}
               required
             />
+            {formErrors.name && <ErrorMsg message={formErrors.name} />}
           </label>
-          {formErrors.name && <Error message={formErrors.name} />}
+
           <label htmlFor="email">
             Email Address
             <input
@@ -55,9 +64,10 @@ export default function Signup() {
               placeholder="you@example.com"
               value={formData.email}
               onChange={handleChange}
+              aria-invalid={formErrors.email ? "true" : undefined}
               required
             />
-            {formErrors.email && <Error message={formErrors.email} />}
+            {formErrors.email && <ErrorMsg message={formErrors.email} />}
           </label>
 
           <label htmlFor="password">
@@ -69,15 +79,19 @@ export default function Signup() {
               placeholder="********"
               value={formData.password}
               onChange={handleChange}
+              aria-invalid={formErrors.password ? "true" : undefined}
               required
-              minLength="6"
             />
-            {formErrors.password && <Error message={formErrors.password} />}
+            {formErrors.password && <ErrorMsg message={formErrors.password} />}
           </label>
 
-          <button type="submit">Sign Up</button>
-          {formErrors.general && <Error message={formErrors.general} />}
-          <footer>
+          <button type="submit" aria-busy={isSubmitting}>
+            {isSubmitting ? "Creating account..." : "Sign Up"}
+          </button>
+
+          {formErrors.general && <ErrorMsg message={formErrors.general} />}
+
+          <footer style={{ textAlign: "center" }}>
             <Link to="/login">Already have an account?</Link>
           </footer>
         </form>

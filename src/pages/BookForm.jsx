@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSubmitForm } from "../hooks/useSubmitForm";
 import Error from "../components/Error";
-import { Navigate, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { API_BASE_URL } from "../constants";
 
@@ -20,7 +20,7 @@ export default function BookForm({ mode = "create" }) {
   const { isLoading, submitForm, formErrors } = useSubmitForm(
     ["title", "author", "genre", "description", "publishedYear"],
     isEdit ? `/books/${id}` : "/books",
-    isEdit // if true, use PUT instead of POST
+    isEdit, // if true, use PUT instead of POST
   );
 
   // Load existing book data if editing
@@ -122,8 +122,8 @@ export default function BookForm({ mode = "create" }) {
               ? "Saving..."
               : "Save Changes"
             : isLoading
-            ? "Adding..."
-            : "Add Book"}
+              ? "Adding..."
+              : "Add Book"}
         </button>
       </form>
     </article>

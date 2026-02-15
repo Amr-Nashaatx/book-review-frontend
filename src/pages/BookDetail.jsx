@@ -23,6 +23,7 @@ export default function BookDetail() {
       useBooksStore.getState().booksData.books.find((b) => b._id === id);
 
     if (cachedBook) {
+      console.log("found book cached", cachedBook);
       setBook(cachedBook);
     }
 
@@ -64,7 +65,7 @@ export default function BookDetail() {
         body: formData,
         onUploadProgress: (progressEvent) => {
           const percentCompleted = Math.round(
-            (progressEvent.loaded * 100) / progressEvent.total
+            (progressEvent.loaded * 100) / progressEvent.total,
           );
           setUploadProgress(percentCompleted);
         },
