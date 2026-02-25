@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { sendRequest } from "../utils/sendRequest";
 import { useFetch } from "./useFetch";
 
@@ -6,7 +6,7 @@ export const useFetchCurrentAuthor = () => {
   const { isLoading, error, fetchData } = useFetch();
   const [author, setAuthor] = useState([]);
 
-  async function fetchCurrentAuthor(params = { withCredentials: true }) {
+  const fetchCurrentAuthor = useCallback(async (params = { withCredentials: true }) => {
     await fetchData(
       () =>
         sendRequest({
@@ -19,7 +19,7 @@ export const useFetchCurrentAuthor = () => {
         setAuthor(author);
       },
     );
-  }
+  }, [fetchData]);
 
   return { fetchCurrentAuthor, setAuthor, author, isLoading, error };
 };

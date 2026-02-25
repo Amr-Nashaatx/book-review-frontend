@@ -23,7 +23,7 @@ export default function ShelfDetail() {
 
   useEffect(() => {
     if (id) fetchShelf(id);
-  }, [id]);
+  }, [fetchShelf, id]);
 
   const handleRemoveBook = async (bookId) => {
     const prevShelf = shelf;

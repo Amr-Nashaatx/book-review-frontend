@@ -1,6 +1,5 @@
 import Error from "../components/Error";
 import BookList from "../components/BookList";
-import Pagination from "../components/Pagination";
 import BookFilters from "../components/BookFilters";
 import Toast from "../components/Toast/Toast";
 
@@ -9,6 +8,7 @@ import { useBooksStore } from "../stores/booksStore";
 import { useSearchParams } from "react-router-dom";
 import { sendRequest } from "../utils/sendRequest";
 import { useNavigate } from "react-router-dom";
+import LoadMore from "../components/LoadMore";
 
 export default function Books() {
   //detect selection mode
@@ -40,7 +40,7 @@ export default function Books() {
     if (!booksData?.books?.length) {
       fetchBooks().catch(() => {});
     }
-  }, [fetchBooks]);
+  }, [fetchBooks, booksData?.books?.length]);
 
   const onApplyFilters = async (pendingFilters) => {
     setIsFirstPage(true);
@@ -74,7 +74,9 @@ export default function Books() {
       }
       try {
         await loadMore();
-      } catch (err) {}
+      } catch (error) {
+        console.error("Failed to load more books.", error);
+      }
       if (anchorY) {
         requestAnimationFrame(() => {
           requestAnimationFrame(() => {
@@ -107,7 +109,7 @@ export default function Books() {
           />
         )}
 
-        <Pagination
+        <LoadMore
           hasNextPage={!!booksData?.pageInfo?.nextCursor}
           isLoading={isLoading}
           onLoadMore={onLoadMore}

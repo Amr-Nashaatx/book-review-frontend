@@ -12,7 +12,7 @@ export default function Reviews({ bookId }) {
 
   useEffect(() => {
     fetchReviews(bookId);
-  }, [bookId]);
+  }, [bookId, fetchReviews]);
 
   useEffect(() => {
     if (!pageInfo?.nextCursor) return;
@@ -27,7 +27,7 @@ export default function Reviews({ bookId }) {
     }
 
     return () => observer.disconnect();
-  }, [pageInfo?.nextCursor, isLoading]);
+  }, [bookId, fetchReviews, isLoading, pageInfo?.nextCursor]);
 
   if (error) return <Error message={error} />;
 

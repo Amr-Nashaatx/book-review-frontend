@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { sendRequest } from "../utils/sendRequest";
 import { useFetch } from "./useFetch";
 
@@ -7,7 +7,7 @@ export const useFetchReviews = () => {
   const [reviews, setReviews] = useState([]);
   const [pageInfo, setPageInfo] = useState();
 
-  async function fetchReviews(bookId, params = {}) {
+  const fetchReviews = useCallback(async (bookId, params = {}) => {
     await fetchData(
       () =>
         sendRequest({
@@ -23,9 +23,9 @@ export const useFetchReviews = () => {
           setReviews(reviews);
         }
         setPageInfo(pageInfo);
-      }
+      },
     );
-  }
+  }, [fetchData]);
 
   return { fetchReviews, reviews, pageInfo, isLoading, error };
 };

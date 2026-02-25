@@ -44,7 +44,7 @@ export default function AddToShelfDropdown({ shelves, book }) {
         params: { withCredentials: true },
       });
       setToastMessage(
-        `Added to ${shelves.find((s) => s._id === shelfId).name}`
+        `Added to ${shelves.find((s) => s._id === shelfId).name}`,
       );
     } catch (err) {
       console.error(err);
@@ -58,19 +58,17 @@ export default function AddToShelfDropdown({ shelves, book }) {
         {shelves.map((shelf) => {
           const isBookInShelf = shelf.books.includes(book._id);
           return (
-            <>
-              <DropdownItem
-                key={shelf._id}
-                label={
-                  isBookInShelf ? (
-                    <span className="shelf-check">✓ {shelf.name}</span>
-                  ) : (
-                    shelf.name
-                  )
-                }
-                handleClick={() => handleAdd(shelf._id)}
-              />
-            </>
+            <DropdownItem
+              key={shelf._id}
+              label={
+                isBookInShelf ? (
+                  <span className="shelf-check">✓ {shelf.name}</span>
+                ) : (
+                  shelf.name
+                )
+              }
+              handleClick={() => handleAdd(shelf._id)}
+            />
           );
         })}
 

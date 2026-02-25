@@ -9,10 +9,7 @@ export default function Login() {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { formErrors, submitForm } = useSubmitForm(
-    ["email", "password"],
-    "/auth/login",
-  );
+  const { formErrors, submitForm } = useSubmitForm("/auth/login");
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });

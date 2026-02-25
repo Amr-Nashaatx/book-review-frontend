@@ -2,7 +2,7 @@ import { useAuthStore } from "../stores/authStore";
 import { useState } from "react";
 import { sendRequest } from "../utils/sendRequest";
 
-export const useSubmitForm = (fields, url, isEdit = false) => {
+export const useSubmitForm = (url, isEdit = false) => {
   const { login } = useAuthStore();
   const [isLoading, setIsLoading] = useState(false);
   const [formErrors, setFormErrors] = useState({

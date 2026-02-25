@@ -12,7 +12,7 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "./stores/authStore";
 import { OnBoarding } from "./pages/OnBoarding.jsx";
-import { AuthorDashboard } from "./pages/AuthorDashboard.jsx";
+import AuthorBooks from "./pages/AuthorBooks.jsx";
 
 export default function App() {
   const navigate = useNavigate();
@@ -25,7 +25,7 @@ export default function App() {
 
     window.addEventListener("auth:expired", handler);
     return () => window.removeEventListener("auth:expired", handler);
-  }, []);
+  }, [logout, navigate]);
   return (
     <Routes>
       <Route path="/" element={<Layout />}>
@@ -68,10 +68,10 @@ export default function App() {
         />
 
         <Route
-          path="author/dashboard"
+          path="author/my-books"
           element={
             <ProtectedRoute>
-              <AuthorDashboard />
+              <AuthorBooks />
             </ProtectedRoute>
           }
         />

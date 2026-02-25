@@ -4,6 +4,7 @@ import Error from "../components/Error";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { API_BASE_URL } from "../constants";
+import UploadField from "../components/UploadField";
 
 export default function BookForm({ mode = "create" }) {
   const { id } = useParams();
@@ -11,14 +12,13 @@ export default function BookForm({ mode = "create" }) {
 
   const [book, setBook] = useState({
     title: "",
-    author: "",
     genre: "",
     description: "",
+    cover: "",
     publishedYear: 0,
   });
 
   const { isLoading, submitForm, formErrors } = useSubmitForm(
-    ["title", "author", "genre", "description", "publishedYear"],
     isEdit ? `/books/${id}` : "/books",
     isEdit, // if true, use PUT instead of POST
   );
@@ -40,14 +40,21 @@ export default function BookForm({ mode = "create" }) {
   }, [isEdit, id]);
 
   const navigate = useNavigate();
-
   const handleChange = (e) => {
+    if (e.target.type === "file")
+      return setBook({ ...book, [e.target.name]: e.target.files[0] });
     setBook({ ...book, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await submitForm(book);
+    const formData = new FormData();
+    for (const field in book) {
+      if (field === "cover" && !(book[field] instanceof File)) continue; // only append cover if it is a file
+      formData.append(field, book[field]);
+    }
+    const ok = await submitForm(formData);
+    if (!ok) return;
     isEdit ? navigate(`/books/${id}`, { state: { book } }) : navigate("/books");
   };
 
@@ -68,18 +75,6 @@ export default function BookForm({ mode = "create" }) {
           />
         </label>
         {formErrors.title && <Error message={formErrors.title} />}
-
-        <label>
-          Author
-          <input
-            name="author"
-            value={book.author}
-            onChange={handleChange}
-            required
-          />
-        </label>
-        {formErrors.author && <Error message={formErrors.author} />}
-
         <label>
           Genre
           <input
@@ -116,7 +111,18 @@ export default function BookForm({ mode = "create" }) {
         {formErrors.publishedYear && (
           <Error message={formErrors.publishedYear} />
         )}
-        <button type="submit" disabled={isLoading}>
+        {isEdit && book.coverImage && (
+          <img src={book.coverImage} alt="book cover" width="80" height="80" />
+        )}
+        <UploadField title="Cover Image" name="cover" onChange={handleChange} />
+        <button
+          type="submit"
+          disabled={
+            isLoading ||
+            book.status === "preview" ||
+            book.status === "published"
+          }
+        >
           {isEdit
             ? isLoading
               ? "Saving..."

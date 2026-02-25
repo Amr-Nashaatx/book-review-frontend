@@ -11,25 +11,24 @@ export default function AnimatedListItem({
   const ref = useRef(null);
 
   // Capture initial styles for collapse animation
-  const styleVars =
-    {
-      "--initial-height": ref.current?.offsetHeight + "px",
-      "--initial-margin-top":
-        ref.current?.style.marginTop ||
-        getComputedStyle(ref.current || document.body).marginTop,
-      "--initial-margin-bottom":
-        ref.current?.style.marginBottom ||
-        getComputedStyle(ref.current || document.body).marginBottom,
-      "--initial-padding-top":
-        ref.current?.style.paddingTop ||
-        getComputedStyle(ref.current || document.body).paddingTop,
-      "--initial-padding-bottom":
-        ref.current?.style.paddingBottom ||
-        getComputedStyle(ref.current || document.body).paddingBottom,
-      "--initial-border-width":
-        ref.current?.style.borderBottomWidth ||
-        getComputedStyle(ref.current || document.body).borderBottomWidth,
-    } || {};
+  const styleVars = {
+    "--initial-height": ref.current?.offsetHeight + "px",
+    "--initial-margin-top":
+      ref.current?.style.marginTop ||
+      getComputedStyle(ref.current || document.body).marginTop,
+    "--initial-margin-bottom":
+      ref.current?.style.marginBottom ||
+      getComputedStyle(ref.current || document.body).marginBottom,
+    "--initial-padding-top":
+      ref.current?.style.paddingTop ||
+      getComputedStyle(ref.current || document.body).paddingTop,
+    "--initial-padding-bottom":
+      ref.current?.style.paddingBottom ||
+      getComputedStyle(ref.current || document.body).paddingBottom,
+    "--initial-border-width":
+      ref.current?.style.borderBottomWidth ||
+      getComputedStyle(ref.current || document.body).borderBottomWidth,
+  };
 
   return (
     <li

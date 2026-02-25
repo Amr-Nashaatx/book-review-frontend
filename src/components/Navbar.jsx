@@ -29,12 +29,31 @@ export default function Navbar() {
         </li>
         {isLoggedIn && (
           <>
-            {!currentUser.isAuthor && (
+            {!(currentUser.role === "author") ? (
               <li>
                 <Link to="/author/onboarding">
                   <button>Become an Author</button>
                 </Link>
               </li>
+            ) : (
+              <>
+                <li>
+                  <NavLink
+                    to="/books/new"
+                    className={({ isActive }) => (isActive ? "active" : "")}
+                  >
+                    Write a Book
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to="/author/my-books"
+                    className={({ isActive }) => (isActive ? "active" : "")}
+                  >
+                    Manage My Books
+                  </NavLink>
+                </li>
+              </>
             )}
             <li>
               <NavLink

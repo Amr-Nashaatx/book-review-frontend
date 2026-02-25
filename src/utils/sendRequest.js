@@ -20,7 +20,7 @@ axiosInstance.interceptors.response.use(
         await axiosInstance.post(
           `${API_BASE_URL}/auth/refresh`,
           {},
-          { withCredentials: true }
+          { withCredentials: true },
         );
         return axiosInstance(originalRequest);
       } catch (err) {
@@ -29,7 +29,7 @@ axiosInstance.interceptors.response.use(
       }
     }
     return Promise.reject(error);
-  }
+  },
 );
 
 export const sendRequest = async ({
@@ -51,7 +51,7 @@ export const sendRequest = async ({
       reqOptions.data = body;
     }
 
-    const response = await axiosInstance.request(reqOptions);
+    const response = await axiosInstance.request({ ...reqOptions });
     return response.data?.data ?? response.data;
   } catch (error) {
     console.error(error);

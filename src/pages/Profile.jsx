@@ -10,7 +10,7 @@ import Shelf from "../components/Shelf/Shelf";
 import BookCard from "../components/BookCard/BookCard";
 
 import { useFetchMyBooks } from "../hooks/useFetchMyBooks";
-import { useFetchCurrentAuthor } from "../hooks/useFetchCurrentAuthorjs";
+import { useFetchCurrentAuthor } from "../hooks/useFetchCurrentAuthor.js";
 import EditableField from "../components/EditableField";
 
 const rowStyle = {
@@ -49,7 +49,10 @@ export default function Profile() {
       setToastMessage("Shelf created successfully.");
       setIsNewShelfModalOpen(false);
       navigate(`/shelves/${shelf._id}`);
-    } catch (error) {}
+    } catch (error) {
+      console.error("Failed to create shelf.", error);
+      setToastMessage("Failed to create shelf.");
+    }
   };
 
   const updateField = async (fieldName, newValue) => {
@@ -62,6 +65,7 @@ export default function Profile() {
       setCurrentUser(newUser);
       setToastMessage(`${fieldName} updated successfully.`);
     } catch (error) {
+      console.error("Failed to update user field.", error);
       setToastMessage("Failed to update.");
     }
   };
@@ -88,10 +92,10 @@ export default function Profile() {
   useEffect(() => {
     fetchShelves();
     fetchMyBooks();
-    if (currentUser.isAuthor) {
+    if (currentUser.role === "author") {
       fetchCurrentAuthor();
     }
-  }, [currentUser]);
+  }, [currentUser.role, fetchCurrentAuthor, fetchMyBooks, fetchShelves]);
 
   const updateAuthorField = async (fieldName, newValue) => {
     try {
@@ -112,6 +116,7 @@ export default function Profile() {
       fetchCurrentAuthor();
       setToastMessage(`${fieldName.split(".").pop()} updated successfully.`);
     } catch (error) {
+      console.error("Failed to update author field.", error);
       setToastMessage("Failed to update.");
     }
   };
@@ -125,13 +130,13 @@ export default function Profile() {
       fetchCurrentAuthor();
       setToastMessage("Bio updated successfully.");
     } catch (error) {
+      console.error("Failed to update author bio.", error);
       setToastMessage("Failed to update bio.");
     }
   };
   if (!isLoggedIn) {
     return <Navigate to="/login" />;
   }
-  if (!isLoggedIn) return <Navigate to="/login" />;
 
   return (
     <main className="container">
@@ -162,7 +167,7 @@ export default function Profile() {
             </span>
             <span>
               {currentUser.name}{" "}
-              {currentUser.isAuthor && author && `(${author.penName})`}
+              {currentUser.role === "author" && author && `(${author.penName})`}
             </span>
           </div>
           <div style={{ display: "flex", justifyContent: "space-between" }}>
@@ -171,7 +176,7 @@ export default function Profile() {
             </span>
             <span>{currentUser.email}</span>
           </div>
-          {currentUser.isAuthor && (
+          {currentUser.role === "author" && (
             <footer>
               <div
                 style={{
@@ -190,7 +195,7 @@ export default function Profile() {
             </footer>
           )}
         </article>
-        {currentUser.isAuthor && author && (
+        {currentUser.role === "author" && author && (
           <article>
             <header>
               <strong>Social Presence</strong>
@@ -263,7 +268,7 @@ export default function Profile() {
           </ul>
         </section>
 
-        {currentUser.isAuthor && (
+        {currentUser.role === "author" && (
           <section>
             <h2>Published Books</h2>
             {!myBooks.length ? (
@@ -271,7 +276,7 @@ export default function Profile() {
             ) : (
               <div style={{ display: "grid", gap: "1rem" }}>
                 {myBooks.map((book) => (
-                  <BookCard book={book} key={book._id} bookData={book} />
+                  <BookCard book={book} key={book._id} />
                 ))}
               </div>
             )}

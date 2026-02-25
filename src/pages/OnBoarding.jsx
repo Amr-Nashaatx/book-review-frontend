@@ -18,11 +18,7 @@ export function OnBoarding() {
     },
   });
 
-  const { submitForm, formErrors } = useSubmitForm(
-    ["penName", "bio", "socialLinks"],
-    "/authors",
-    false,
-  );
+  const { submitForm, formErrors } = useSubmitForm("/authors", false);
 
   const navigate = useNavigate();
 

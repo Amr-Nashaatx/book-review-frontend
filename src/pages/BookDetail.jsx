@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import AddToShelfDropdown from "../components/AddToShelfDropdown/AddToShelfDropdown";
 import { sendRequest } from "../utils/sendRequest";
 import { useFetchBookById } from "../hooks/useFetchBookById";
+import UploadFieldWithProgress from "../components/UploadFieldWithProgress";
 
 export default function BookDetail() {
   const { id } = useParams();
@@ -23,7 +24,6 @@ export default function BookDetail() {
       useBooksStore.getState().booksData.books.find((b) => b._id === id);
 
     if (cachedBook) {
-      console.log("found book cached", cachedBook);
       setBook(cachedBook);
     }
 
@@ -31,7 +31,7 @@ export default function BookDetail() {
     if (location.state?.fetchBook) {
       fetchBookById(id);
     }
-  }, [id, location.state]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [fetchBookById, id, location.state, setBook]);
 
   const deleteBook = useBooksStore((s) => s.deleteBook);
 
@@ -41,7 +41,7 @@ export default function BookDetail() {
   const { isLoggedIn, currentUser } = useAuthStore();
 
   const isOwner = book
-    ? isLoggedIn && currentUser?.id === book.createdBy
+    ? isLoggedIn && currentUser?.authorId === book.author._id
     : false;
 
   const navigate = useNavigate();
@@ -85,7 +85,7 @@ export default function BookDetail() {
 
   useEffect(() => {
     fetchShelves({ withCredentials: true });
-  }, []);
+  }, [fetchShelves]);
 
   if (isLoading) return <p>Loading book...</p>;
   return (
@@ -94,7 +94,7 @@ export default function BookDetail() {
         <>
           <header style={{ padding: "2rem 4rem" }}>
             <h2>{book.title}</h2>
-            <em>by {book.author}</em>
+            <em>by {book.author.penName}</em>
           </header>
 
           <div
@@ -168,18 +168,12 @@ export default function BookDetail() {
                 Delete
               </button>
             </div>
-
-            <div style={{ marginTop: "1rem" }}>
-              <label htmlFor="cover-upload">Update Cover Image</label>
-              <input
-                id="cover-upload"
-                type="file"
-                accept="image/*"
-                onChange={handleCoverUpload}
-                disabled={isUploading}
-              />
-              {isUploading && <progress value={uploadProgress} max="100" />}
-            </div>
+            <UploadFieldWithProgress
+              title="Update Cover Image"
+              uploadHandler={handleCoverUpload}
+              isUploading={isUploading}
+              uploadProgress={uploadProgress}
+            />
           </div>
         )}
 

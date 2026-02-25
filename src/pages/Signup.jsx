@@ -13,10 +13,7 @@ export default function Signup() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { formErrors, submitForm } = useSubmitForm(
-    ["name", "email", "password"],
-    "/auth/register",
-  );
+  const { formErrors, submitForm } = useSubmitForm("/auth/register");
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
