@@ -4,9 +4,9 @@ import Navbar from "./Navbar";
 
 export default function Layout() {
   return (
-    <main className="container">
+    <main>
       <Navbar />
-      <section style={{ marginTop: "2rem" }}>
+      <section className="container" style={{ marginTop: "2rem" }}>
         <Outlet />
       </section>
     </main>

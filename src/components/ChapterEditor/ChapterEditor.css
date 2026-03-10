@@ -1,0 +1,64 @@
+/* Toolbar nav */
+nav[aria-label="Editor toolbar"] ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  list-style: none;
+  padding: 0.5rem 0;
+  margin: 0 0 1rem;
+}
+
+nav[aria-label="Editor toolbar"] button {
+  padding: 0.25rem 0.6rem;
+  font-size: 0.85rem;
+  min-width: 2rem;
+  margin: 0;
+}
+
+/* Editor content area */
+.chapter-body .ProseMirror {
+  outline: none;
+  min-height: 480px;
+  border: var(--pico-border-width) solid var(--pico-form-element-border-color);
+  border-radius: var(--pico-border-radius);
+  padding: 1rem;
+  line-height: 1.8;
+  transition: border-color 0.2s;
+}
+
+.chapter-body .ProseMirror:focus {
+  border-color: var(--pico-primary);
+}
+
+/* Placeholder */
+.chapter-body .ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  color: var(--pico-muted-color);
+  pointer-events: none;
+  float: left;
+  height: 0;
+  font-style: italic;
+}
+
+/* Header layout */
+main > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+main > header hgroup {
+  margin: 0;
+}
+
+main > header hgroup p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--pico-muted-color);
+}
+
+main > header button {
+  margin: 0;
+  width: auto;
+}

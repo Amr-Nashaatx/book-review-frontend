@@ -13,6 +13,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "./stores/authStore";
 import { OnBoarding } from "./pages/OnBoarding.jsx";
 import AuthorBooks from "./pages/AuthorBooks.jsx";
+import ChapterEdit from "./pages/ChapterEdit.jsx";
 
 export default function App() {
   const navigate = useNavigate();
@@ -76,6 +77,7 @@ export default function App() {
           }
         />
         <Route path="books/:id" element={<BookDetail />} />
+        <Route path="books/:id/chapters" element={<ChapterEdit />} />
         <Route path="shelves/:id" element={<ShelfDetail />} />
       </Route>
     </Routes>

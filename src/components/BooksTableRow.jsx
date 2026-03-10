@@ -1,4 +1,5 @@
 import { Edit3, Eye, Send, Trash2 } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const iconBtnStyle = {
   padding: "6px",
@@ -7,7 +8,7 @@ const iconBtnStyle = {
   justifyContent: "center",
   width: "36px",
   height: "36px",
-  marginBottom: 0, // Prevents Pico's default button margin
+  marginBottom: 0,
 };
 
 export default function BooksTableRow({ bookData }) {
@@ -47,7 +48,9 @@ export default function BooksTableRow({ bookData }) {
             style={iconBtnStyle}
             title="Edit Chapters"
           >
-            <Edit3 size={16} strokeWidth={2.5} />
+            <Link to={`/books/${bookData._id}/chapters`}>
+              <Edit3 size={16} strokeWidth={2.5} />
+            </Link>
           </button>
 
           <button

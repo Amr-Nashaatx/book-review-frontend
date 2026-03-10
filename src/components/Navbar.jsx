@@ -12,7 +12,7 @@ export default function Navbar() {
     clearStore();
   };
   return (
-    <nav>
+    <nav style={{ padding: "0 2rem" }}>
       <ul>
         <li>
           <strong>BookVerse</strong>
