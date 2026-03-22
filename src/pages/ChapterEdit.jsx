@@ -6,6 +6,23 @@ import { useFetchChapters } from "../hooks/useFetchChapters";
 import { useNavigate, useParams } from "react-router-dom";
 import { sendRequest } from "../utils/sendRequest";
 
+function ChapterEditorPlaceholder({ isCreatingDefaultChapter }) {
+  return (
+    <main className="container">
+      <header>
+        <hgroup>
+          <h2>Chapter Editor</h2>
+          <p>
+            {isCreatingDefaultChapter
+              ? "Creating your first chapter..."
+              : "Select a chapter or create a new one to start writing."}
+          </p>
+        </hgroup>
+      </header>
+    </main>
+  );
+}
+
 export default function ChapterEdit() {
   const params = useParams();
   const navigate = useNavigate();
@@ -13,13 +30,17 @@ export default function ChapterEdit() {
 
   const [isMenuOpen, setIsMenuOpen] = useState(true);
   const { fetchChapters, chapters, setChapters } = useFetchChapters();
+  console.log("chapters", chapters);
   const [selectedChapterId, setSelectedChapterId] = useState("");
+  const [isCreatingDefaultChapter, setIsCreatingDefaultChapter] =
+    useState(false);
 
   useEffect(() => {
     async function fetchInitialChapters() {
-      // if no chapter create default one
       const fetchedChapters = await fetchChapters(bookId);
+
       if (!fetchedChapters.length) {
+        setIsCreatingDefaultChapter(true);
         try {
           const { chapter } = await sendRequest({
             url: `/books/${bookId}/chapters`,
@@ -28,20 +49,32 @@ export default function ChapterEdit() {
           });
 
           setChapters([chapter]);
+          setSelectedChapterId(chapter._id);
         } catch (error) {
           console.error(error);
           navigate("/author/my-books");
+        } finally {
+          setIsCreatingDefaultChapter(false);
         }
       }
     }
 
     fetchInitialChapters();
-  }, []);
+  }, [bookId, fetchChapters, navigate, setChapters]);
+
   useEffect(() => {
-    if (chapters.length > 0 && !selectedChapterId) {
+    if (!chapters.length) {
+      setSelectedChapterId("");
+      return;
+    }
+
+    const hasSelectedChapter = chapters.some(
+      (ch) => ch._id === selectedChapterId,
+    );
+    if (!hasSelectedChapter) {
       setSelectedChapterId(chapters[0]._id);
     }
-  }, [chapters]);
+  }, [chapters, selectedChapterId]);
 
   const selectedChapter = chapters.find((ch) => ch._id === selectedChapterId);
 
@@ -56,6 +89,7 @@ export default function ChapterEdit() {
       body: { title },
     });
     setChapters((existingChapters) => [...existingChapters, chapter]);
+    setSelectedChapterId(chapter._id);
   };
 
   const handleDeleteChapter = async (chapterId) => {
@@ -116,42 +150,45 @@ export default function ChapterEdit() {
       return;
     }
   };
+
   return (
     <div className={`chapter-edit ${!isMenuOpen ? "menu-collapse" : ""}`}>
-      {selectedChapter && (
-        <ComponentErrorBoundary
-          componentName="Chapters menu"
-          resetKeys={[isMenuOpen, chapters.length, selectedChapterId]}
-          className="chapter-menu-boundary"
-          title="The chapters list ran into a problem."
-          message="Retry to remount the menu without interrupting the editor."
-        >
-          <ChaptersMenu
-            isMenuOpen={isMenuOpen}
-            chapters={chapters}
-            selectedChapterId={selectedChapterId}
-            onDeleteChapter={handleDeleteChapter}
-            onCreateChapter={handleCreateChapter}
-            onReorderChapters={handleReorderChapters}
-            onSelectChapter={handleSelectChapter}
-            onMenuOpen={() => setIsMenuOpen((prev) => !prev)}
-          />
-        </ComponentErrorBoundary>
-      )}
-      {selectedChapter && (
-        <ComponentErrorBoundary
-          componentName="Chapter editor"
-          resetKeys={[selectedChapterId]}
-          className="chapter-editor-boundary"
-          title="The editor hit an unexpected problem."
-          message="Switch chapters or retry to reload the editor while keeping the menu available."
-        >
+      <ComponentErrorBoundary
+        componentName="Chapters menu"
+        resetKeys={[isMenuOpen, chapters.length, selectedChapterId]}
+        className="chapter-menu-boundary"
+        title="The chapters list ran into a problem."
+        message="Retry to remount the menu without interrupting the editor."
+      >
+        <ChaptersMenu
+          isMenuOpen={isMenuOpen}
+          chapters={chapters}
+          selectedChapterId={selectedChapterId}
+          onDeleteChapter={handleDeleteChapter}
+          onCreateChapter={handleCreateChapter}
+          onReorderChapters={handleReorderChapters}
+          onSelectChapter={handleSelectChapter}
+          onMenuOpen={() => setIsMenuOpen((prev) => !prev)}
+        />
+      </ComponentErrorBoundary>
+      <ComponentErrorBoundary
+        componentName="Chapter editor"
+        resetKeys={[selectedChapterId, isCreatingDefaultChapter]}
+        className="chapter-editor-boundary"
+        title="The editor hit an unexpected problem."
+        message="Switch chapters or retry to reload the editor while keeping the menu available."
+      >
+        {selectedChapter ? (
           <ChapterEditor
             onEditChapterContent={handleUpdateChapterContent}
             chapter={selectedChapter}
           />
-        </ComponentErrorBoundary>
-      )}
+        ) : (
+          <ChapterEditorPlaceholder
+            isCreatingDefaultChapter={isCreatingDefaultChapter}
+          />
+        )}
+      </ComponentErrorBoundary>
     </div>
   );
 }

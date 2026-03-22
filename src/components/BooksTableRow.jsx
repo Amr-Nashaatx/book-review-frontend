@@ -13,8 +13,16 @@ const iconBtnStyle = {
 };
 
 export default function BooksTableRow({ bookData, onDeleteBook }) {
-  const handlePreviewBook = (bookId) => {
-    window.open(`/api/books/${bookId}/preview`, "_blank");
+  const handlePreviewBook = async (bookId) => {
+    const pdf = await sendRequest({
+      url: `/books/${bookId}/preview`,
+      method: "get",
+      responseType: "blob",
+    });
+    const url = URL.createObjectURL(pdf);
+    window.open(url, "_blank");
+
+    setTimeout(() => URL.revokeObjectURL(url), 10000);
   };
   return (
     <tr>
@@ -33,7 +41,7 @@ export default function BooksTableRow({ bookData, onDeleteBook }) {
           <small>{bookData.status}</small>
         </mark>
       </td>
-      <td className="text-center">24</td>
+      <td className="text-center">{bookData.chapters.length + 1}</td>
       <td>
         <small>{new Date(bookData.updatedAt).toLocaleDateString()}</small>
       </td>
