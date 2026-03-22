@@ -26,6 +26,10 @@
   overflow: scroll;
 }
 
+.chapter-menu-boundary {
+  min-height: 100%;
+}
+
 /* Menu header - always visible */
 .menu-header {
   display: flex;

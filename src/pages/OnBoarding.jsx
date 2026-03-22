@@ -47,7 +47,7 @@ export function OnBoarding() {
     e.preventDefault();
     const success = await submitForm(authorData);
     if (success) {
-      navigate(`/author/dashboard`, {
+      navigate(`/author/my-books`, {
         state: { message: "Your author profile is pending admin approval" },
       });
     }

@@ -8,6 +8,7 @@ export const useFetchChapters = () => {
 
   const fetchChapters = useCallback(
     async (bookId, params = { withCredentials: true }) => {
+      let APIresult;
       await fetchData(
         () =>
           sendRequest({
@@ -17,9 +18,11 @@ export const useFetchChapters = () => {
           }),
         (data) => {
           const { chapters } = data;
+          APIresult = chapters;
           setChapters(chapters);
         },
       );
+      return APIresult;
     },
     [fetchData],
   );

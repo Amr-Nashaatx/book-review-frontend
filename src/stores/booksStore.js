@@ -56,7 +56,6 @@ export const useBooksStore = create(
         fetchBooks: async (params = {}) => {
           try {
             set({ isLoading: true, error: "" });
-            console.log(params);
             const res = await sendRequest({
               url: "/books",
               method: "get",
@@ -124,7 +123,7 @@ export const useBooksStore = create(
       }),
       {
         name: "books",
-      }
-    )
-  )
+      },
+    ),
+  ),
 );

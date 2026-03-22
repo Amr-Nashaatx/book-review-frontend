@@ -1,6 +1,6 @@
 import BooksTableRow from "./BooksTableRow";
 
-export default function BooksTable({ booksData }) {
+export default function BooksTable({ booksData, onDeleteBook }) {
   return (
     <figure>
       <table role="grid">
@@ -19,7 +19,11 @@ export default function BooksTable({ booksData }) {
         </thead>
         <tbody>
           {booksData.map((book) => (
-            <BooksTableRow key={book._id} bookData={book} />
+            <BooksTableRow
+              key={book._id}
+              bookData={book}
+              onDeleteBook={onDeleteBook}
+            />
           ))}
         </tbody>
       </table>

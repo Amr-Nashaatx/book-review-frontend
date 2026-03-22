@@ -62,3 +62,7 @@ main > header button {
   margin: 0;
   width: auto;
 }
+
+.chapter-editor-boundary {
+  min-height: 100%;
+}

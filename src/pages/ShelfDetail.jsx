@@ -40,7 +40,6 @@ export default function ShelfDetail() {
             withCredentials: true,
           },
         });
-        console.log("Setting the toast message");
         setToastMessage("Removed book from shelf.");
       });
     } catch (err) {
@@ -73,25 +72,27 @@ export default function ShelfDetail() {
         <button onClick={handleAddBooks}>Add Books</button>
       </header>
 
-      <section>
-        {shelf.books.length === 0 ? (
-          <p>This shelf is empty.</p>
-        ) : (
-          <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
-            {shelf.books.map((book) => {
-              return (
-                <ShelfBook
-                  key={book._id}
-                  book={book}
-                  handleRemoveBook={handleRemoveBook}
-                  isRemoving={removingBookId === book._id}
-                  isCollapsing={collapsingBookId === book._id}
-                />
-              );
-            })}
-          </ul>
-        )}
-      </section>
+      {shelf && (
+        <section>
+          {shelf.books.length === 0 ? (
+            <p>This shelf is empty.</p>
+          ) : (
+            <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+              {shelf.books.map((book) => {
+                return (
+                  <ShelfBook
+                    key={book._id}
+                    book={book}
+                    handleRemoveBook={handleRemoveBook}
+                    isRemoving={removingBookId === book._id}
+                    isCollapsing={collapsingBookId === book._id}
+                  />
+                );
+              })}
+            </ul>
+          )}
+        </section>
+      )}
       {toastMessage && (
         <Toast message={toastMessage} onClose={() => setToastMessage("")} />
       )}

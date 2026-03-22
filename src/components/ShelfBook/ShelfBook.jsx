@@ -17,7 +17,7 @@ export default function ShelfBook({
     >
       <div>
         <strong>{book.title}</strong>{" "}
-        <span style={{ opacity: 0.7 }}>(by {book.author})</span>
+        <span style={{ opacity: 0.7 }}>(by {book.author.penName})</span>
       </div>
 
       <div style={{ display: "flex", gap: "0.5rem" }}>

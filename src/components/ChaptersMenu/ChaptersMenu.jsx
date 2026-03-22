@@ -110,8 +110,6 @@ export default function ChaptersMenu({
             const [moved] = reordered.splice(oldIndex, 1);
             reordered.splice(newIndex, 0, moved);
 
-            console.log(reordered);
-
             pendingOrder.current = reordered;
           }}
           onDragEnd={() => {
@@ -121,17 +119,18 @@ export default function ChaptersMenu({
           }}
         >
           <ul>
-            {chapters.map((ch, idx) => (
-              <Chapter
-                key={ch._id}
-                index={idx}
-                chapter={ch}
-                isCollapsed={!isMenuOpen}
-                onDeleteChapter={onDeleteChapter}
-                selectedChapterId={selectedChapterId}
-                onSelectChapter={onSelectChapter}
-              />
-            ))}
+            {chapters &&
+              chapters.map((ch, idx) => (
+                <Chapter
+                  key={ch._id}
+                  index={idx}
+                  chapter={ch}
+                  isCollapsed={!isMenuOpen}
+                  onDeleteChapter={onDeleteChapter}
+                  selectedChapterId={selectedChapterId}
+                  onSelectChapter={onSelectChapter}
+                />
+              ))}
           </ul>
         </DragDropProvider>
         <div

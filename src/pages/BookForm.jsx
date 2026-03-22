@@ -2,8 +2,7 @@ import { useEffect, useState } from "react";
 import { useSubmitForm } from "../hooks/useSubmitForm";
 import Error from "../components/Error";
 import { useNavigate, useParams } from "react-router-dom";
-import axios from "axios";
-import { API_BASE_URL } from "../constants";
+import { sendRequest } from "../utils/sendRequest";
 import UploadField from "../components/UploadField";
 
 export default function BookForm({ mode = "create" }) {
@@ -28,9 +27,7 @@ export default function BookForm({ mode = "create" }) {
     const fetchBook = async () => {
       if (!isEdit) return;
       try {
-        const {
-          data: { data },
-        } = await axios.get(`${API_BASE_URL}/books/${id}`);
+        const data = await sendRequest({ url: `/books/${id}` });
         setBook(data.book);
       } catch (err) {
         console.error("Failed to load book for editing:", err);

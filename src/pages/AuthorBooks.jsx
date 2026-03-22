@@ -6,13 +6,25 @@ import BooksTable from "../components/BooksTable";
 import Toast from "../components/Toast/Toast";
 import { useFetchMyBooks } from "../hooks/useFetchMyBooks";
 import Pagination from "../components/Pagination";
+import { sendRequest } from "../utils/sendRequest";
 
 export default function AuthorBooks() {
   const location = useLocation();
   const [toastMsg, setToastMsg] = useState(location.state?.message || "");
 
-  const { fetchMyBooks, myBooks, pageInfo } = useFetchMyBooks();
+  const { fetchMyBooks, myBooks, setMyBooks, pageInfo } = useFetchMyBooks();
   const [filters, setFilters] = useState({});
+
+  const handleDeleteBook = async (id) => {
+    const snapshot = myBooks;
+    try {
+      setMyBooks((prevBooks) => prevBooks.filter((book) => book._id !== id));
+      await sendRequest({ url: `/books/${bookData._id}` });
+    } catch (error) {
+      console.error(error);
+      setMyBooks(snapshot);
+    }
+  };
 
   useEffect(() => {
     fetchMyBooks(filters);
@@ -49,7 +61,7 @@ export default function AuthorBooks() {
         <BookSortSelect onSortChange={onSortChange} />
       </div>
 
-      <BooksTable booksData={myBooks} />
+      <BooksTable booksData={myBooks} onDeleteBook={handleDeleteBook} />
 
       <footer>
         {pageInfo && pageInfo.totalPages > 1 && (

@@ -8,18 +8,18 @@ export const useFetchBookById = () => {
 
   const fetchBookById = useCallback(
     async (id, params = { withCredentials: true }) => {
-    await fetchData(
-      () =>
-        sendRequest({
-          url: `/books/${id}`,
-          method: "get",
-          params,
-        }),
-      (data) => {
-        const { book } = data;
-        setBook(book);
-      },
-    );
+      await fetchData(
+        () =>
+          sendRequest({
+            url: `/books/${id}`,
+            method: "get",
+            params,
+          }),
+        (data) => {
+          const { book } = data;
+          setBook(book);
+        },
+      );
     },
     [fetchData],
   );

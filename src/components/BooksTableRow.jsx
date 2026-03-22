@@ -1,5 +1,6 @@
-import { Edit3, Eye, Send, Trash2 } from "lucide-react";
+import { Edit3, Eye, Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { sendRequest } from "../utils/sendRequest";
 
 const iconBtnStyle = {
   padding: "6px",
@@ -11,7 +12,10 @@ const iconBtnStyle = {
   marginBottom: 0,
 };
 
-export default function BooksTableRow({ bookData }) {
+export default function BooksTableRow({ bookData, onDeleteBook }) {
+  const handlePreviewBook = (bookId) => {
+    window.open(`/api/books/${bookId}/preview`, "_blank");
+  };
   return (
     <tr>
       <td>
@@ -39,6 +43,7 @@ export default function BooksTableRow({ bookData }) {
             className="outline secondary"
             style={iconBtnStyle}
             title="View Book"
+            onClick={() => handlePreviewBook(bookData._id)}
           >
             <Eye size={16} strokeWidth={2.5} />
           </button>
@@ -54,14 +59,6 @@ export default function BooksTableRow({ bookData }) {
           </button>
 
           <button
-            className="contrast"
-            style={iconBtnStyle}
-            title="Publish to Store"
-          >
-            <Send size={16} strokeWidth={2.5} />
-          </button>
-
-          <button
             className="outline secondary"
             style={{
               ...iconBtnStyle,
@@ -70,7 +67,11 @@ export default function BooksTableRow({ bookData }) {
             }}
             title="Delete Draft"
           >
-            <Trash2 size={16} strokeWidth={2.5} />
+            <Trash2
+              size={16}
+              strokeWidth={2.5}
+              onClick={() => onDeleteBook(bookData._id)}
+            />
           </button>
         </div>
       </td>
