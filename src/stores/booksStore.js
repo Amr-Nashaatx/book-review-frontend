@@ -1,4 +1,3 @@
-// src/stores/booksStore.js
 import { create } from "zustand";
 import { persist, devtools } from "zustand/middleware";
 import { sendRequest } from "../utils/sendRequest";
@@ -39,8 +38,8 @@ export const useBooksStore = create(
             filters: {
               genre: [],
               author: "",
-              averageRating: "",
-              sortBy: "",
+              rating: "",
+              sort: "",
             },
           }),
         setBooksData: (newData) => set({ booksData: newData }),

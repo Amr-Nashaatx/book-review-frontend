@@ -27,8 +27,9 @@ export default function BookDetail() {
       setBook(cachedBook);
     }
 
-    // if fetch flag is set in route state, fetch the book from server
-    if (location.state?.fetchBook) {
+    const shouldFetchBook =
+      location.state?.fetchBook || (!location.state?.fetchBook && !cachedBook);
+    if (shouldFetchBook) {
       fetchBookById(id);
     }
   }, [fetchBookById, id, location.state, setBook]);

@@ -19,7 +19,7 @@ export default function AuthorBooks() {
     const snapshot = myBooks;
     try {
       setMyBooks((prevBooks) => prevBooks.filter((book) => book._id !== id));
-      await sendRequest({ url: `/books/${bookData._id}` });
+      await sendRequest({ url: `/books/${id}`, method: "delete" });
     } catch (error) {
       console.error(error);
       setMyBooks(snapshot);

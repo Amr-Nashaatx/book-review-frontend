@@ -52,9 +52,7 @@ export default function BookForm({ mode = "create" }) {
     }
     const ok = await submitForm(formData);
     if (!ok) return;
-    isEdit
-      ? navigate(`/books/${id}`, { state: { book } })
-      : navigate(`/author/my-books`);
+    isEdit ? navigate(`/books/${id}`) : navigate(`/author/my-books`);
   };
 
   return (
