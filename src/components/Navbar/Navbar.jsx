@@ -1,5 +1,6 @@
-import { Button, Container, Group, Text } from "@mantine/core";
-import { Link, NavLink } from "react-router-dom";
+import { Burger, Button, Container, Text } from "@mantine/core";
+import { useEffect, useState } from "react";
+import { Link, NavLink, useLocation } from "react-router-dom";
 import { useAuthStore } from "../../stores/authStore";
 import { sendRequest } from "../../utils/sendRequest";
 import { useBooksStore } from "../../stores/booksStore";
@@ -9,8 +10,14 @@ const getNavLinkClassName = ({ isActive }) =>
   `app-navbar__link${isActive ? " app-navbar__link--active" : ""}`;
 
 export default function Navbar() {
+  const [mobileMenuOpened, setMobileMenuOpened] = useState(false);
   const { isLoggedIn, logout, currentUser } = useAuthStore();
   const clearStore = useBooksStore((s) => s.clearStore);
+  const location = useLocation();
+
+  useEffect(() => {
+    setMobileMenuOpened(false);
+  }, [location.pathname]);
 
   const onLogoutClick = async () => {
     await sendRequest({ url: "/auth/logout", method: "post" });
@@ -21,82 +28,88 @@ export default function Navbar() {
   return (
     <header className="app-navbar">
       <Container size="lg" className="app-navbar__inner">
-        <Group
-          justify="space-between"
-          gap="md"
-          wrap="nowrap"
-          style={{ width: "100%" }}
-        >
+        <div className="app-navbar__layout">
           <Link to="/books" className="app-navbar__brand-link">
             <Text className="app-navbar__brand">BookVerse</Text>
           </Link>
 
-          <Group
-            gap="xs"
-            wrap="wrap"
-            justify="space-between"
-            align="center"
-            style={{ width: "100%" }}
+          <Burger
+            opened={mobileMenuOpened}
+            onClick={() => setMobileMenuOpened((opened) => !opened)}
+            hiddenFrom="md"
+            size="md"
+            color="var(--mantine-color-ink-8)"
+            aria-label={
+              mobileMenuOpened
+                ? "Close navigation menu"
+                : "Open navigation menu"
+            }
+            className="app-navbar__burger"
+          />
+
+          <div
+            className={`app-navbar__actions${
+              mobileMenuOpened ? " app-navbar__actions--open" : ""
+            }`}
           >
             <NavLink to="/books" className={getNavLinkClassName}>
               Books
             </NavLink>
-            <Group justify="space-between">
-              <div>
-                {isLoggedIn &&
-                  (!(currentUser.role === "author") ? (
-                    <Button
-                      component={Link}
-                      to="/author/onboarding"
-                      color="copper"
-                    >
-                      Become an Author
-                    </Button>
-                  ) : (
-                    <>
-                      <NavLink to="/books/new" className={getNavLinkClassName}>
-                        Write a Book
-                      </NavLink>
-                      <NavLink
-                        to="/author/my-books"
-                        className={getNavLinkClassName}
-                      >
-                        Manage My Books
-                      </NavLink>
-                    </>
-                  ))}
-              </div>
 
-              <div className="nav-auth-actions">
-                {isLoggedIn ? (
-                  <>
-                    <NavLink to="/profile" className={getNavLinkClassName}>
-                      Profile
-                    </NavLink>
-                    <Button
-                      component={Link}
-                      to="/login"
-                      onClick={onLogoutClick}
-                      variant="subtle"
-                      color="copper"
-                    >
-                      Logout
-                    </Button>
-                  </>
+            <div className="app-navbar__primary-actions">
+              {isLoggedIn &&
+                (!(currentUser.role === "author") ? (
+                  <Button
+                    component={Link}
+                    to="/author/onboarding"
+                    color="copper"
+                  >
+                    Become an Author
+                  </Button>
                 ) : (
                   <>
-                    <NavLink to="/signup" end className={getNavLinkClassName}>
-                      Signup
+                    <NavLink to="/books/new" className={getNavLinkClassName}>
+                      Write a Book
                     </NavLink>
-                    <Button component={Link} to="/login" color="copper">
-                      Login
-                    </Button>
+                    <NavLink
+                      to="/author/my-books"
+                      className={getNavLinkClassName}
+                    >
+                      Manage My Books
+                    </NavLink>
                   </>
-                )}
-              </div>
-            </Group>
-          </Group>
-        </Group>
+                ))}
+            </div>
+
+            <div className="app-navbar__auth-actions">
+              {isLoggedIn ? (
+                <>
+                  <NavLink to="/profile" className={getNavLinkClassName}>
+                    Profile
+                  </NavLink>
+                  <Button
+                    component={Link}
+                    to="/login"
+                    onClick={onLogoutClick}
+                    variant="subtle"
+                    color="copper"
+                  >
+                    Logout
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <NavLink to="/signup" end className={getNavLinkClassName}>
+                    Signup
+                  </NavLink>
+                  <Button component={Link} to="/login" color="copper">
+                    Login
+                  </Button>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
       </Container>
     </header>
   );
