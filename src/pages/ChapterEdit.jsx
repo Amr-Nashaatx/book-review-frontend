@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import ChapterEditor from "../components/ChapterEditor/ChapterEditor";
 import ChaptersMenu from "../components/ChaptersMenu/ChaptersMenu";
-import ComponentErrorBoundary from "../components/ComponentErrorBoundary";
+import ComponentErrorBoundary from "../components/ComponentErrorBoundary/ComponentErrorBoundary";
 import { useFetchChapters } from "../hooks/useFetchChapters";
 import { useNavigate, useParams } from "react-router-dom";
 import { sendRequest } from "../utils/sendRequest";
