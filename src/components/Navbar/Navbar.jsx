@@ -1,9 +1,18 @@
-import { Burger, Button, Container, Text } from "@mantine/core";
+import {
+  ActionIcon,
+  Burger,
+  Button,
+  Container,
+  Text,
+  useComputedColorScheme,
+  useMantineColorScheme,
+} from "@mantine/core";
+import { Moon, Sun } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import { useAuthStore } from "../../stores/authStore";
-import { sendRequest } from "../../utils/sendRequest";
 import { useBooksStore } from "../../stores/booksStore";
+import { sendRequest } from "../../utils/sendRequest";
 import "./Navbar.css";
 
 const getNavLinkClassName = ({ isActive }) =>
@@ -14,6 +23,9 @@ export default function Navbar() {
   const { isLoggedIn, logout, currentUser } = useAuthStore();
   const clearStore = useBooksStore((s) => s.clearStore);
   const location = useLocation();
+  const { setColorScheme } = useMantineColorScheme();
+  const computedColorScheme = useComputedColorScheme("light");
+  const isDarkMode = computedColorScheme === "dark";
 
   useEffect(() => {
     setMobileMenuOpened(false);
@@ -25,6 +37,10 @@ export default function Navbar() {
     clearStore();
   };
 
+  const onColorSchemeToggle = () => {
+    setColorScheme(isDarkMode ? "light" : "dark");
+  };
+
   return (
     <header className="app-navbar">
       <Container size="lg" className="app-navbar__inner">
@@ -33,19 +49,37 @@ export default function Navbar() {
             <Text className="app-navbar__brand">BookVerse</Text>
           </Link>
 
-          <Burger
-            opened={mobileMenuOpened}
-            onClick={() => setMobileMenuOpened((opened) => !opened)}
-            hiddenFrom="md"
-            size="md"
-            color="var(--mantine-color-ink-8)"
-            aria-label={
-              mobileMenuOpened
-                ? "Close navigation menu"
-                : "Open navigation menu"
-            }
-            className="app-navbar__burger"
-          />
+          <div className="app-navbar__controls">
+            <ActionIcon
+              variant="subtle"
+              color="copper"
+              radius="xl"
+              size="lg"
+              onClick={onColorSchemeToggle}
+              style={{ margin: "auto 0" }}
+              aria-label={
+                isDarkMode ? "Switch to light mode" : "Switch to dark mode"
+              }
+              className="app-navbar__theme-toggle"
+            >
+              {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
+            </ActionIcon>
+
+            <Burger
+              opened={mobileMenuOpened}
+              onClick={() => setMobileMenuOpened((opened) => !opened)}
+              style={{ display: "block" }}
+              hiddenFrom="md"
+              size="md"
+              color="var(--mantine-color-ink-8)"
+              aria-label={
+                mobileMenuOpened
+                  ? "Close navigation menu"
+                  : "Open navigation menu"
+              }
+              className="app-navbar__burger"
+            />
+          </div>
 
           <div
             className={`app-navbar__actions${

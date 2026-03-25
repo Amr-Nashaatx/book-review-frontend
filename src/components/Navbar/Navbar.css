@@ -1,9 +1,14 @@
 .app-navbar {
   position: relative;
   height: 100%;
-  background: rgba(253, 251, 248, 0.92);
+  background: var(--app-navbar-bg);
   backdrop-filter: blur(14px);
-  border-bottom: 1px solid color-mix(in srgb, var(--mantine-color-copper-3) 35%, white 65%);
+  border-bottom: 1px solid var(--app-navbar-border);
+  box-shadow: var(--app-navbar-shadow);
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease;
 }
 
 .app-navbar__inner {
@@ -26,12 +31,29 @@
 }
 
 .app-navbar__brand {
-  color: var(--mantine-color-ink-9);
+  color: var(--app-navbar-brand-color);
   font-family: Georgia, "Times New Roman", serif;
   font-size: 1.35rem;
   font-weight: 700;
   letter-spacing: 0.04em;
   text-transform: uppercase;
+}
+
+.app-navbar__controls {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.app-navbar__theme-toggle {
+  color: var(--app-navbar-toggle-color);
+  background: var(--app-navbar-toggle-bg);
+  border: 1px solid var(--app-navbar-toggle-border);
+}
+
+.app-navbar__theme-toggle:hover {
+  background: var(--app-navbar-toggle-bg-hover);
 }
 
 .app-navbar__burger {
@@ -66,21 +88,23 @@
   align-items: center;
   padding: 0.45rem 0.75rem;
   border-radius: 999px;
-  color: var(--mantine-color-ink-8);
+  color: var(--app-navbar-link-color);
   font-weight: 600;
   text-decoration: none;
-  transition: background-color 120ms ease, color 120ms ease;
+  transition:
+    background-color 120ms ease,
+    color 120ms ease;
   white-space: nowrap;
 }
 
 .app-navbar__link:hover {
-  background-color: color-mix(in srgb, var(--mantine-color-copper-0) 82%, white 18%);
-  color: var(--mantine-color-copper-7);
+  background-color: var(--app-navbar-link-hover-bg);
+  color: var(--app-navbar-link-hover-color);
 }
 
 .app-navbar__link--active {
-  background-color: color-mix(in srgb, var(--mantine-color-copper-1) 70%, white 30%);
-  color: var(--mantine-color-copper-6);
+  background-color: var(--app-navbar-link-active-bg);
+  color: var(--app-navbar-link-active-color);
   font-weight: 700;
 }
 
@@ -96,9 +120,15 @@
     gap: 0.75rem;
   }
 
+  .app-navbar__controls {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+  }
+
   .app-navbar__burger {
     display: inline-flex;
-    margin-left: auto;
+    margin: 0;
   }
 
   .app-navbar__actions {
@@ -112,10 +142,10 @@
     align-items: stretch;
     gap: 0.75rem;
     padding: 1rem;
-    border: 1px solid color-mix(in srgb, var(--mantine-color-copper-3) 35%, white 65%);
+    border: 1px solid var(--app-navbar-menu-border);
     border-radius: 1rem;
-    background: rgba(255, 252, 248, 0.98);
-    box-shadow: 0 18px 40px rgba(78, 56, 39, 0.14);
+    background: var(--app-navbar-menu-bg);
+    box-shadow: var(--app-navbar-menu-shadow);
   }
 
   .app-navbar__actions--open,
