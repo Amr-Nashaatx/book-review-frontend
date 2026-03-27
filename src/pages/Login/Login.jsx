@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Alert,
   Anchor,
@@ -10,25 +11,20 @@ import {
   TextInput,
   Title,
 } from "@mantine/core";
-import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-import { useSubmitForm } from "../hooks/useSubmitForm";
-import "./Signup.css";
+import { useSubmitForm } from "../../hooks/useSubmitForm";
+import "./Login.css";
 
 const inputClassNames = {
-  label: "signup-page__label",
+  label: "login-page__label",
 };
 
-export default function Signup() {
+export default function Login() {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: "",
-  });
+  const [formData, setFormData] = useState({ email: "", password: "" });
 
-  const { formErrors, isLoading, submitForm } = useSubmitForm("/auth/register");
+  const { formErrors, isLoading, submitForm } = useSubmitForm("/auth/login");
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -42,14 +38,14 @@ export default function Signup() {
   };
 
   return (
-    <main className="signup-page">
+    <main className="login-page">
       <Container size={460} py={0}>
         <Paper
           withBorder
           radius="xl"
           shadow="xl"
           p={{ base: "xl", sm: "2.5rem" }}
-          className="signup-page__shell"
+          className="login-page__shell"
         >
           <Stack gap="xl">
             <header>
@@ -58,36 +54,21 @@ export default function Signup() {
                 fw={700}
                 tt="uppercase"
                 size="xs"
-                className="signup-page__eyebrow"
+                className="login-page__eyebrow"
               >
                 BookVerse
               </Text>
-              <Title order={1} mt="sm" className="signup-page__title">
-                Create an account
+              <Title order={1} mt="sm" className="login-page__title">
+                Welcome back
               </Title>
               <Text c="dimmed" mt="xs">
-                Join our community of book lovers, build your shelves, and
-                share reviews with your reading circle.
+                Continue discovering new books, tracking your shelves, and
+                sharing reviews with your reading circle.
               </Text>
             </header>
 
             <form onSubmit={handleSubmit}>
               <Stack gap="md">
-                <TextInput
-                  type="text"
-                  id="name"
-                  name="name"
-                  label="Full Name"
-                  placeholder="Jane Doe"
-                  value={formData.name}
-                  onChange={handleChange}
-                  error={formErrors.name}
-                  autoComplete="name"
-                  required
-                  size="md"
-                  classNames={inputClassNames}
-                />
-
                 <TextInput
                   type="email"
                   id="email"
@@ -107,11 +88,11 @@ export default function Signup() {
                   id="password"
                   name="password"
                   label="Password"
-                  placeholder="Create a password"
+                  placeholder="Enter your password"
                   value={formData.password}
                   onChange={handleChange}
                   error={formErrors.password}
-                  autoComplete="new-password"
+                  autoComplete="current-password"
                   required
                   size="md"
                   classNames={inputClassNames}
@@ -130,15 +111,15 @@ export default function Signup() {
                   loading={isLoading}
                   loaderProps={{ type: "dots" }}
                 >
-                  {isLoading ? "Creating account..." : "Sign Up"}
+                  {isLoading ? "Logging in..." : "Login"}
                 </Button>
               </Stack>
             </form>
 
             <Text ta="center" size="sm" c="dimmed">
-              Already have an account?{" "}
-              <Anchor component={Link} to="/login" fw={600}>
-                Login instead
+              New here?{" "}
+              <Anchor component={Link} to="/signup" fw={600}>
+                Create an account
               </Anchor>
             </Text>
           </Stack>

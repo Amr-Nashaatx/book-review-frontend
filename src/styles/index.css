@@ -91,53 +91,55 @@ form {
     background-color 180ms ease,
     border-color 180ms ease,
     box-shadow 180ms ease;
+
+  & dl {
+    margin: 0;
+  }
+
+  & .row {
+    display: flex;
+    gap: 1rem;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--app-divider-color);
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+
+  & dt {
+    font-weight: 600;
+  }
+
+  & dd {
+    margin: 0;
+    color: var(--app-surface-muted-text);
+  }
 }
 
-.profile-card dl {
-  margin: 0;
-}
+dialog {
+  &[open] {
+    opacity: 1;
+    transition: opacity 0.25s ease;
+  }
 
-.profile-card .row {
-  display: flex;
-  gap: 1rem;
-  padding: 0.75rem 0;
-  border-bottom: 1px solid var(--app-divider-color);
-}
+  &:not([open]) {
+    opacity: 0;
+  }
 
-.profile-card .row:last-child {
-  border-bottom: none;
-}
+  & > article {
+    transform: translateY(-10px) scale(0.96);
+    opacity: 0;
+    animation: modalIn 0.25s ease forwards;
+  }
 
-.profile-card dt {
-  font-weight: 600;
-}
+  &.closing {
+    opacity: 0;
 
-.profile-card dd {
-  margin: 0;
-  color: var(--app-surface-muted-text);
-}
-
-dialog[open] {
-  opacity: 1;
-  transition: opacity 0.25s ease;
-}
-
-dialog:not([open]) {
-  opacity: 0;
-}
-
-dialog > article {
-  transform: translateY(-10px) scale(0.96);
-  opacity: 0;
-  animation: modalIn 0.25s ease forwards;
-}
-
-dialog.closing {
-  opacity: 0;
-}
-
-dialog.closing > article {
-  animation: modalOut 0.25s ease forwards;
+    & > article {
+      animation: modalOut 0.25s ease forwards;
+    }
+  }
 }
 
 @keyframes modalIn {
@@ -167,5 +169,15 @@ dialog.closing > article {
   100% {
     transform: translateY(-12px) scale(0.95);
     opacity: 0;
+  }
+}
+
+@media (max-width: 48em) {
+  form {
+    padding: 1.5rem;
+  }
+
+  .main-content {
+    padding: 2rem 1rem;
   }
 }

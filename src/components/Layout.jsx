@@ -9,7 +9,7 @@ export default function Layout() {
         <Navbar />
       </AppShell.Header>
       <AppShell.Main>
-        <Container size="lg" py="xl">
+        <Container size="lg">
           <Outlet />
         </Container>
       </AppShell.Main>
