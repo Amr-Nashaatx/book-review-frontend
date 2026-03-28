@@ -3,70 +3,134 @@ import Select from "react-select";
 const customStyles = {
   control: (base, state) => ({
     ...base,
-    backgroundColor: "#1b1d1f", // dark base background
-    borderColor: state.isFocused ? "#3b82f6" : "#2a2c2f", // soft blue border when focused
-    color: "#e0e0e0",
+    background: "var(--app-surface-bg)",
+    borderColor: state.isFocused
+      ? "var(--mantine-color-copper-5)"
+      : "var(--app-surface-border)",
+    color: "var(--mantine-color-text)",
     boxShadow: "none",
-    borderRadius: "8px",
-    minHeight: "40px",
+    borderRadius: "var(--mantine-radius-md)",
+    minHeight: "44px",
+    transition:
+      "background-color 180ms ease, border-color 180ms ease, box-shadow 180ms ease",
     "&:hover": {
-      borderColor: "#3b82f6",
+      borderColor: state.isFocused
+        ? "var(--mantine-color-copper-5)"
+        : "var(--mantine-color-copper-3)",
     },
+    ...(state.isFocused
+      ? {
+          boxShadow:
+            "0 0 0 1px var(--mantine-color-copper-4), 0 8px 24px rgba(197, 106, 52, 0.12)",
+        }
+      : {}),
   }),
 
   menu: (base) => ({
     ...base,
-    backgroundColor: "#222426",
-    border: "1px solid #2f3134",
-    borderRadius: "8px",
-    marginTop: "4px",
+    background: "var(--app-surface-bg)",
+    border: "1px solid var(--app-surface-border)",
+    borderRadius: "calc(var(--mantine-radius-md) + 2px)",
+    boxShadow: "var(--app-surface-shadow)",
+    overflow: "hidden",
+    marginTop: "6px",
+  }),
+
+  menuList: (base) => ({
+    ...base,
+    padding: "0.4rem",
   }),
 
   option: (base, state) => ({
     ...base,
     backgroundColor: state.isSelected
-      ? "#3b82f6" // selected blue accent
+      ? "var(--mantine-color-copper-6)"
       : state.isFocused
-      ? "#2a2c2f" // subtle hover
-      : "#222426",
-    color: state.isSelected ? "#ffffff" : "#e0e0e0",
+        ? "color-mix(in srgb, var(--mantine-color-copper-0) 70%, white 30%)"
+        : "transparent",
+    color: state.isSelected
+      ? "white"
+      : state.isFocused
+        ? "var(--mantine-color-copper-8)"
+        : "var(--mantine-color-text)",
     cursor: "pointer",
+    borderRadius: "calc(var(--mantine-radius-sm) + 2px)",
+    fontWeight: state.isSelected ? 600 : 500,
+    transition: "background-color 140ms ease, color 140ms ease",
+    ":active": {
+      backgroundColor: "var(--mantine-color-copper-5)",
+      color: "white",
+    },
   }),
 
   multiValue: (base) => ({
     ...base,
-    backgroundColor: "#3b82f6", // chip background
-    borderRadius: "6px",
+    background:
+      "color-mix(in srgb, var(--mantine-color-copper-1) 78%, white 22%)",
+    border:
+      "1px solid color-mix(in srgb, var(--mantine-color-copper-3) 72%, white 28%)",
+    borderRadius: "999px",
+    paddingInlineStart: "0.15rem",
   }),
 
   multiValueLabel: (base) => ({
     ...base,
-    color: "#fff",
-    fontWeight: 500,
+    color: "var(--mantine-color-copper-8)",
+    fontWeight: 600,
   }),
 
   multiValueRemove: (base) => ({
     ...base,
-    color: "#fff",
+    color: "var(--mantine-color-copper-7)",
+    borderRadius: "999px",
     ":hover": {
-      backgroundColor: "#2563eb",
+      backgroundColor: "var(--mantine-color-copper-6)",
       color: "#fff",
     },
   }),
 
   placeholder: (base) => ({
     ...base,
-    color: "#9ca3af", // muted gray placeholder
+    color: "var(--app-surface-muted-text)",
   }),
 
   singleValue: (base) => ({
     ...base,
-    color: "#f3f4f6", // bright text for selected item
+    color: "var(--mantine-color-text)",
   }),
 
   input: (base) => ({
     ...base,
-    color: "#f3f4f6", // text color when typing
+    color: "var(--mantine-color-text)",
+  }),
+
+  valueContainer: (base) => ({
+    ...base,
+    gap: "0.3rem",
+    padding: "0.35rem 0.5rem",
+  }),
+
+  clearIndicator: (base) => ({
+    ...base,
+    color: "var(--app-surface-muted-text)",
+    ":hover": {
+      color: "var(--mantine-color-copper-7)",
+    },
+  }),
+
+  dropdownIndicator: (base, state) => ({
+    ...base,
+    color: state.isFocused
+      ? "var(--mantine-color-copper-6)"
+      : "var(--app-surface-muted-text)",
+    ":hover": {
+      color: "var(--mantine-color-copper-7)",
+    },
+  }),
+
+  indicatorSeparator: (base) => ({
+    ...base,
+    backgroundColor: "var(--app-divider-color)",
   }),
 };
 
@@ -79,6 +143,7 @@ export default function CustomSelect({ value, options, onChange }) {
       value={value}
       styles={customStyles}
       onChange={onChange}
+      placeholder="Genres"
     />
   );
 }

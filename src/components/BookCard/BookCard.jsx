@@ -14,7 +14,7 @@ export default function BookCard({ book, selectionMode, onAddBookToShelf }) {
       <div className="book-card-content">
         <header>
           <h3 className="book-card-title">{book.title}</h3>
-          <small>by {book.author.penName}</small>
+          <small>by {book.authorId.penName}</small>
         </header>
 
         {selectionMode && (

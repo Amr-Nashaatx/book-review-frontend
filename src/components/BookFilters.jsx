@@ -1,10 +1,8 @@
-import { useState } from "react";
 import CustomSelect from "./CustomSelect";
 import { useBooksStore } from "../stores/booksStore";
+import { Button, Grid, Select, TextInput } from "@mantine/core";
 
 export default function BookFilters({ onApplyFilters }) {
-  const [collapsed, setCollapsed] = useState(true);
-
   const filters = useBooksStore((s) => s.filters);
   const setFilters = useBooksStore((s) => s.setFilters);
   const genres = useBooksStore((s) => s.genres);
@@ -21,31 +19,12 @@ export default function BookFilters({ onApplyFilters }) {
     e.preventDefault();
     await onApplyFilters(filters);
   };
-  const styles = {
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "center",
-    maxWidth: "1000px",
-    margin: "0 auto",
-    width: "100%",
-  };
-  if (collapsed) styles.alignItems = "center";
-  if (!collapsed) delete styles.alignItems;
+
   return (
-    <form onSubmit={handleSubmit} style={styles}>
-      <button
-        type="button"
-        onClick={() => setCollapsed((prev) => !prev)}
-        style={{
-          marginBottom: "1rem",
-          width: "200px",
-        }}
-      >
-        {collapsed ? "Show Filters" : "Hide Filters"}
-      </button>
-      {!collapsed && (
-        <>
-          {options.length && (
+    <form onSubmit={handleSubmit}>
+      <Grid className="filters" grow>
+        <Grid.Col>
+          {options.length > 0 && (
             <CustomSelect
               options={options}
               value={options.filter((opt) => filters.genre.includes(opt.value))}
@@ -54,65 +33,62 @@ export default function BookFilters({ onApplyFilters }) {
                   genre: selected ? selected.map((opt) => opt.value) : [],
                 });
               }}
+              s
             />
           )}
+        </Grid.Col>
+        <Grid.Col span={{ base: 12, md: 4 }}>
+          <TextInput
+            type="text"
+            placeholder="Author"
+            value={filters.author}
+            onChange={(e) => setFilters({ author: e.target.value })}
+          />
+        </Grid.Col>
 
-          <div
-            className="filters"
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-              gap: "1rem",
-              marginTop: "2rem",
-            }}
+        <Grid.Col span={{ base: 12, md: 4 }}>
+          <Select
+            value={filters.rating || null}
+            placeholder="Rating"
+            onChange={(value) =>
+              setFilters({
+                rating: value ?? "",
+              })
+            }
+            data={Array.from({ length: 5 }, (_, i) => i + 1).map((idx) => ({
+              value: `${parseInt(idx)}`,
+              label: `+${idx}`,
+            }))}
+          />
+        </Grid.Col>
+
+        <Grid.Col span={{ base: 12, md: 4 }}>
+          <Select
+            value={filters.sort || null}
+            placeholder="Sort By"
+            data={[
+              { value: "title", label: "Title (A–Z)" },
+              { value: "averageRating", label: "Rating (High → Low)" },
+              { value: "publishedYear", label: "Newest First" },
+            ]}
+            onChange={(value) => setFilters({ sort: value ?? "" })}
+          />
+        </Grid.Col>
+
+        <Grid.Col>
+          <Button
+            className="outline"
+            type="button"
+            variant="subtle"
+            style={{ marginRight: "1rem" }}
+            onClick={() => clearFilters()}
           >
-            <input
-              type="text"
-              placeholder="Author"
-              value={filters.author}
-              onChange={(e) => setFilters({ author: e.target.value })}
-            />
-            <select
-              value={filters.rating}
-              onChange={(e) => setFilters({ rating: e.target.value })}
-            >
-              <option value="">Rating</option>
-              {Array.from({ length: 5 }, (_, i) => i + 1).map((idx) => (
-                <option key={idx} value={idx}>
-                  +{idx}
-                </option>
-              ))}
-            </select>
+            Clear Filters
+          </Button>
 
-            <select
-              value={filters.sort}
-              onChange={(e) => setFilters({ sort: e.target.value })}
-            >
-              <option value="">Sort By</option>
-              <option value="title">Title (A–Z)</option>
-              <option value="-averageRating">Rating (High → Low)</option>
-              <option value="-publishedYear">Newest First</option>
-            </select>
-          </div>
-          <div
-            className="grid"
-            style={{
-              marginTop: "2rem",
-              gap: "1rem",
-            }}
-          >
-            <button
-              className="outline"
-              type="button"
-              onClick={() => clearFilters()}
-            >
-              Clear Filters
-            </button>
-
-            <button type="submit">Apply Filters</button>
-          </div>
-        </>
-      )}
+          <Button type="submit">Apply Filters</Button>
+        </Grid.Col>
+      </Grid>
     </form>
   );
 }

@@ -49,7 +49,7 @@ export const bookverseTheme = createTheme({
   components: {
     Button: Button.extend({
       defaultProps: {
-        radius: "xl",
+        radius: "l",
       },
     }),
   },

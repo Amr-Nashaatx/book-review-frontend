@@ -9,6 +9,7 @@ import { useSearchParams } from "react-router-dom";
 import { sendRequest } from "../utils/sendRequest";
 import { useNavigate } from "react-router-dom";
 import LoadMore from "../components/LoadMore";
+import { Text, Title } from "@mantine/core";
 
 export default function Books() {
   //detect selection mode
@@ -92,8 +93,10 @@ export default function Books() {
 
   return (
     <article style={{ padding: "4rem" }}>
-      <header style={{ padding: "2rem" }}>
-        <h2>Books</h2>
+      <header>
+        <Title order={2} c="copper.6">
+          Books
+        </Title>
       </header>
 
       <BookFilters onApplyFilters={onApplyFilters} />
