@@ -9,6 +9,10 @@ import AddToShelfDropdown from "../components/AddToShelfDropdown/AddToShelfDropd
 import { sendRequest } from "../utils/sendRequest";
 import { useFetchBookById } from "../hooks/useFetchBookById";
 import UploadFieldWithProgress from "../components/UploadFieldWithProgress";
+import { Grid, Image, Rating, Stack, Text, Title } from "@mantine/core";
+
+const PLACEHOLDER_BOOK_COVER_URL =
+  "https://placehold.co/500x500/f8dfcc/703c1c/png?text=No+Cover";
 
 export default function BookDetail() {
   const { id } = useParams();
@@ -42,7 +46,7 @@ export default function BookDetail() {
   const { isLoggedIn, currentUser } = useAuthStore();
 
   const isOwner = book
-    ? isLoggedIn && currentUser?.authorId === book.author._id
+    ? isLoggedIn && currentUser?.authorId === book.authorId._id
     : false;
 
   const navigate = useNavigate();
@@ -89,53 +93,72 @@ export default function BookDetail() {
   }, [fetchShelves]);
 
   if (isLoading) return <p>Loading book...</p>;
+  const descriptionSection = ({ title, desc }) => {
+    return (
+      <>
+        <Text component="dt" fw={"bold"}>
+          {title}
+        </Text>
+        <Text component="dd" fw={"lighter"} pl={"xl"}>
+          {desc}
+        </Text>
+      </>
+    );
+  };
   return (
     <article>
       {book ? (
         <>
           <header style={{ padding: "2rem 4rem" }}>
-            <h2>{book.title}</h2>
-            <em>by {book.author.penName}</em>
+            <Title order={2} c={"copper.6"}>
+              {book.title}
+            </Title>
+            <Text c={"dimmed"}>by {book.authorId.penName}</Text>
           </header>
 
-          <div
-            className="book-data"
-            style={{
-              display: "flex",
-              gap: "1rem",
-              padding: "2rem 4rem",
-              marginTop: "1.2rem",
-            }}
-          >
-            <img
-              style={{ width: "500px", height: "500px", objectFit: "contain" }}
-              src={book.coverImage}
-              alt={book.title}
-            />
-            <dl style={{ padding: "2rem 4rem", marginTop: "1.2rem" }}>
-              {book.genre && (
-                <>
-                  <dt>Genre</dt>
-                  <dd>{book.genre}</dd>
-                </>
-              )}
+          <Grid gutter={0}>
+            <Grid.Col span={{ base: 12, md: 4 }}>
+              <Image
+                h={500}
+                w={300}
+                src={book.coverImage || PLACEHOLDER_BOOK_COVER_URL}
+                alt={book.title}
+                radius={5}
+                fallbackSrc={PLACEHOLDER_BOOK_COVER_URL}
+              />
+            </Grid.Col>
+            <Grid.Col span={{ base: 12, md: 8 }}>
+              <Stack component={"dl"}>
+                {book.genre && (
+                  <>
+                    {descriptionSection({
+                      title: "Genre",
+                      desc: `${book.genre}`,
+                    })}
+                  </>
+                )}
 
-              {book.publishedYear && (
-                <>
-                  <dt>Published Year</dt>
-                  <dd>{book.publishedYear}</dd>
-                </>
-              )}
-              {book.averageRating && (
-                <>
-                  <dt>Rating</dt>
-                  <dd>{renderStars(book.averageRating)}</dd>
-                </>
-              )}
-              <dt>Description</dt>
-              <dd>{book.description}</dd>
-            </dl>
-          </div>
+                {book.publishedYear && (
+                  <>
+                    {descriptionSection({
+                      title: "Published Year",
+                      desc: `${book.publishedYear}`,
+                    })}
+                  </>
+                )}
+                {book.averageRating && (
+                  <>
+                    {descriptionSection({
+                      title: "Rating",
+                      desc: <Rating value={book.averageRating} />,
+                    })}
+                  </>
+                )}
+                <dt>Description</dt>
+                <dd>{book.description}</dd>
+              </Stack>
+            </Grid.Col>
+          </Grid>
         </>
       ) : (
         "loading book..."

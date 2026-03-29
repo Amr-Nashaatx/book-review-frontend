@@ -47,7 +47,13 @@ export default function Books() {
 
   const onApplyFilters = async (pendingFilters) => {
     setIsFirstPage(true);
-    await fetchBooks(pendingFilters);
+    const queryParams = {};
+    // filter out empty filters
+    for (let filterdName in pendingFilters) {
+      if (!(pendingFilters[filterdName] === ""))
+        queryParams[filterdName] = pendingFilters[filterdName];
+    }
+    await fetchBooks(queryParams);
   };
 
   const onAddBookToShelf = async (bookId) => {
@@ -79,6 +85,7 @@ export default function Books() {
         await loadMore();
       } catch (error) {
         console.error("Failed to load more books.", error);
+        toast.error("Failed to load more books.");
       }
       if (anchorY) {
         requestAnimationFrame(() => {
