@@ -7,6 +7,22 @@
   --app-surface-shadow: 0 18px 60px rgba(38, 29, 21, 0.08);
   --app-surface-muted-text: var(--mantine-color-gray-7);
   --app-divider-color: var(--mantine-color-gray-3);
+  
+  --toastify-color-light: color-mix(
+    in srgb,
+    var(--mantine-color-copper-0) 72%,
+    white 28%
+  );
+  --toastify-text-color-light: var(--mantine-color-ink-9);
+  --toastify-color-success: var(--mantine-color-moss-6);
+  --toastify-color-error: var(--mantine-color-copper-7);
+  --toastify-color-warning: var(--mantine-color-copper-5);
+  --toastify-color-info: var(--mantine-color-copper-6);
+  --toastify-toast-background: var(--toastify-color-light);
+  --toastify-toast-color: var(--toastify-text-color-light);
+  --toastify-toast-bd-radius: var(--mantine-radius-md);
+  --toastify-toast-shadow: var(--app-surface-shadow);
+  --toastify-font-family: var(--mantine-font-family);
 
   --app-navbar-bg: rgba(253, 251, 248, 0.92);
   --app-navbar-border: color-mix(
@@ -117,7 +133,16 @@
     var(--mantine-color-copper-8) 45%,
     var(--mantine-color-dark-4) 55%
   );
-  --app-navbar-menu-shadow: 0 18px 40px rgba(0, 0, 0, 0.34);
+  
+  --toastify-color-dark: color-mix(
+    in srgb,
+    #2a1e15 82%,
+    var(--mantine-color-dark-6) 18%
+  );
+  --toastify-text-color-dark: var(--mantine-color-copper-0);
+  --toastify-toast-background: var(--toastify-color-dark);
+  --toastify-toast-color: var(--toastify-text-color-dark);
+  --toastify-toast-shadow: 0 18px 40px rgba(0, 0, 0, 0.34);
 }
 
 html,
@@ -132,6 +157,14 @@ body {
   transition:
     background 180ms ease,
     color 180ms ease;
+}
+
+a {
+  text-decoration: none;
+  color: var(--mantine-color-copper-3);
+}
+a:active {
+  color: var(--mantine-color-copper-5);
 }
 
 form {
@@ -242,3 +275,7 @@ dialog {
     padding: 2rem 1rem;
   }
 }
+
+
+
+

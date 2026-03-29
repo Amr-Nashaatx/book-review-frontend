@@ -1,17 +1,18 @@
+import { Alert } from "@mantine/core";
+import { InfoIcon } from "lucide-react";
+
 export default function Error({ message = "Something went wrong." }) {
+  const icon = <InfoIcon />;
   return (
-    <article
-      style={{
-        border: "1px solid var(--pico-del-color)",
-        color: "var(--pico-del-color)",
-        padding: "1rem",
-        marginTop: "1rem",
-      }}
+    <Alert
+      variant="light"
+      color="red"
+      radius="md"
+      withCloseButton
+      title="Error"
+      icon={icon}
     >
-      <header>
-        <strong>Error</strong>
-      </header>
-      <p>{message}</p>
-    </article>
+      {message}
+    </Alert>
   );
 }

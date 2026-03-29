@@ -1,26 +1,69 @@
 import { Link } from "react-router-dom";
+import {
+  Card,
+  Image,
+  Text,
+  Badge,
+  Button,
+  Group,
+  Title,
+  Stack,
+} from "@mantine/core";
 import "./BookCard.css";
 
+function Demo() {
+  return (
+    <Card shadow="sm" padding="lg" radius="md" withBorder>
+      <Card.Section>
+        <Image
+          src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-8.png"
+          height={160}
+          alt="Norway"
+        />
+      </Card.Section>
+
+      <Group justify="space-between" mt="md" mb="xs">
+        <Text fw={500}>Norway Fjord Adventures</Text>
+        <Badge color="pink">On Sale</Badge>
+      </Group>
+
+      <Text size="sm" c="dimmed">
+        With Fjord Tours you can explore more of the magical fjord landscapes
+        with tours and activities on and around the fjords of Norway
+      </Text>
+
+      <Button color="blue" fullWidth mt="md" radius="md">
+        Book classic tour now
+      </Button>
+    </Card>
+  );
+}
 export default function BookCard({ book, selectionMode, onAddBookToShelf }) {
   const CardContent = () => (
     <>
       {book.coverImage && (
-        <img
-          src={book.coverImage}
-          alt={`Cover of ${book.title}`}
-          className="book-card-image"
-        />
+        <Card.Section>
+          <Image
+            src={book.coverImage}
+            height={470}
+            alt={`Cover of ${book.title}`}
+          />
+        </Card.Section>
       )}
       <div className="book-card-content">
-        <header>
-          <h3 className="book-card-title">{book.title}</h3>
-          <small>by {book.authorId.penName}</small>
-        </header>
+        <Stack gap={2}>
+          <Title order={3} c={"copper.6"}>
+            {book.title}
+          </Title>
+          <Text c={"dimmed"}>by {book.authorId.penName}</Text>
+        </Stack>
 
         {selectionMode && (
-          <div className="book-card-actions">
-            <Link to={`/books/${book._id}`}>View</Link>
-            <button
+          <Group className="book-card-actions">
+            <Button variant="outline">
+              <Link to={`/books/${book._id}`}>View</Link>
+            </Button>
+            <Button
               className="primary"
               onClick={(e) => {
                 e.preventDefault();
@@ -28,8 +71,8 @@ export default function BookCard({ book, selectionMode, onAddBookToShelf }) {
               }}
             >
               Add To Shelf
-            </button>
-          </div>
+            </Button>
+          </Group>
         )}
       </div>
     </>
@@ -37,9 +80,14 @@ export default function BookCard({ book, selectionMode, onAddBookToShelf }) {
 
   if (selectionMode) {
     return (
-      <div key={book._id} className="book-card">
+      <Card
+        key={book._id}
+        className="book-card"
+        bg="light-dark(var(--mantine-color-ink-1), #2a1e15)"
+        withBorder
+      >
         <CardContent />
-      </div>
+      </Card>
     );
   }
 
@@ -50,7 +98,13 @@ export default function BookCard({ book, selectionMode, onAddBookToShelf }) {
       className="book-card"
       state={{ book }}
     >
-      <CardContent />
+      <Card
+        bg="light-dark(var(--mantine-color-ink-1), #2a1e15)"
+        withBorder
+      >
+        <CardContent />
+      </Card>
     </Link>
   );
 }
+

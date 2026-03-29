@@ -11,8 +11,8 @@ export const useBooksStore = create(
         filters: {
           genre: [],
           author: "",
-          rating: "",
-          sort: "",
+          rating: "4",
+          sort: "title",
         },
         isLoading: false,
         error: "",

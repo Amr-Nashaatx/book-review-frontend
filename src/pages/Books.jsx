@@ -1,7 +1,6 @@
 import Error from "../components/Error";
 import BookList from "../components/BookList";
 import BookFilters from "../components/BookFilters";
-import Toast from "../components/Toast/Toast";
 
 import { useEffect, useRef, useState } from "react";
 import { useBooksStore } from "../stores/booksStore";
@@ -9,15 +8,14 @@ import { useSearchParams } from "react-router-dom";
 import { sendRequest } from "../utils/sendRequest";
 import { useNavigate } from "react-router-dom";
 import LoadMore from "../components/LoadMore";
-import { Text, Title } from "@mantine/core";
+import { Title } from "@mantine/core";
+import { toast } from "react-toastify";
 
 export default function Books() {
   //detect selection mode
   const [params] = useSearchParams();
   const addToShelfId = params.get("addToShelf");
   const selectionMode = Boolean(addToShelfId);
-  // toast
-  const [toastMessage, setToastMessage] = useState("");
   // state
   const booksData = useBooksStore((s) => s.booksData);
   const isLoading = useBooksStore((s) => s.isLoading);
@@ -43,6 +41,10 @@ export default function Books() {
     }
   }, [fetchBooks, booksData?.books?.length]);
 
+  useEffect(() => {
+    if (error) toast.error("Something went wrong");
+  }, [error]);
+
   const onApplyFilters = async (pendingFilters) => {
     setIsFirstPage(true);
     await fetchBooks(pendingFilters);
@@ -56,11 +58,11 @@ export default function Books() {
         body: { bookId },
         params: { withCredentials: true },
       });
-      setToastMessage("Book added to shelf.");
+      toast.success("Book added to shelf.");
       navigate(`/shelves/${addToShelfId}`);
     } catch (error) {
       console.log(error);
-      setToastMessage("Failed to add book.");
+      toast.error("Failed to add book.");
     }
   };
 
@@ -118,8 +120,6 @@ export default function Books() {
           onLoadMore={onLoadMore}
         />
       </div>
-      {toastMessage && <Toast message={toastMessage} />}
-      {error && <Error message={error} />}
     </article>
   );
 }

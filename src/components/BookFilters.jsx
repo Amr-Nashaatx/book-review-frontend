@@ -1,6 +1,7 @@
 import CustomSelect from "./CustomSelect";
 import { useBooksStore } from "../stores/booksStore";
 import { Button, Grid, Select, TextInput } from "@mantine/core";
+import { useEffect } from "react";
 
 export default function BookFilters({ onApplyFilters }) {
   const filters = useBooksStore((s) => s.filters);
@@ -19,6 +20,9 @@ export default function BookFilters({ onApplyFilters }) {
     e.preventDefault();
     await onApplyFilters(filters);
   };
+  useEffect(() => {
+    console.log("FILTERS", filters);
+  }, [filters]);
 
   return (
     <form onSubmit={handleSubmit}>
@@ -65,6 +69,7 @@ export default function BookFilters({ onApplyFilters }) {
         <Grid.Col span={{ base: 12, md: 4 }}>
           <Select
             value={filters.sort || null}
+            defaultValue={"title"}
             placeholder="Sort By"
             data={[
               { value: "title", label: "Title (A–Z)" },

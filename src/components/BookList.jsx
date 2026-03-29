@@ -1,14 +1,14 @@
 import BookCard from "./BookCard/BookCard";
+import { SimpleGrid } from "@mantine/core";
 
 export default function BookList({ books, selectionMode, onAddBookToShelf }) {
   return (
-    <div
-      style={{
-        display: "grid",
-        gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
-        gap: "1rem",
-        marginTop: "1.5rem",
-      }}
+    <SimpleGrid
+      SimpleGrid
+      cols={{ base: 1, sm: 2, lg: 3 }}
+      spacing={{ base: 10, sm: "xl" }}
+      verticalSpacing={{ base: "md", sm: "xl" }}
+      my={40}
     >
       {books.map((book) => (
         <BookCard
@@ -18,6 +18,6 @@ export default function BookList({ books, selectionMode, onAddBookToShelf }) {
           onAddBookToShelf={onAddBookToShelf}
         />
       ))}
-    </div>
+    </SimpleGrid>
   );
 }

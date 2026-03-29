@@ -91,8 +91,8 @@ export default function Profile() {
   };
   useEffect(() => {
     fetchShelves();
-    fetchMyBooks();
     if (currentUser.role === "author") {
+      fetchMyBooks();
       fetchCurrentAuthor();
     }
   }, [currentUser.role, fetchCurrentAuthor, fetchMyBooks, fetchShelves]);
