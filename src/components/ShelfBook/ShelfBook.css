@@ -25,6 +25,30 @@
   animation-delay: 240ms;
 }
 
+.shelf-book button.danger {
+  border: 1px solid var(--app-danger-border);
+  border-radius: 999px;
+  background: var(--app-danger-bg);
+  color: var(--app-danger-text);
+  font-weight: 600;
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease,
+    color 180ms ease,
+    transform 180ms ease;
+}
+
+.shelf-book button.danger:hover:not(:disabled) {
+  background: var(--app-danger-bg-hover);
+  border-color: var(--mantine-color-brick-5);
+  transform: translateY(-1px);
+}
+
+.shelf-book button.danger:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
 @keyframes shelfBookEnter {
   from {
     opacity: 0;

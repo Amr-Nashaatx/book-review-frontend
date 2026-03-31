@@ -6,7 +6,7 @@ export default function Error({ message = "Something went wrong." }) {
   return (
     <Alert
       variant="light"
-      color="red"
+      color="brick"
       radius="md"
       withCloseButton
       title="Error"

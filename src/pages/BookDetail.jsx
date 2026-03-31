@@ -1,15 +1,25 @@
 import { useParams, Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuthStore } from "../stores/authStore";
 import { useBooksStore } from "../stores/booksStore";
-import { renderStars } from "../utils/renderStars";
-import Reviews from "../components/Review";
+import Reviews from "../components/Reviews";
 import { useFetchShelves } from "../hooks/useFetchShelves";
 import { useEffect, useState } from "react";
-import AddToShelfDropdown from "../components/AddToShelfDropdown/AddToShelfDropdown";
+import AddToShelfDropdown from "../components/AddToShelfDropdown";
 import { sendRequest } from "../utils/sendRequest";
 import { useFetchBookById } from "../hooks/useFetchBookById";
 import UploadFieldWithProgress from "../components/UploadFieldWithProgress";
-import { Grid, Image, Rating, Stack, Text, Title } from "@mantine/core";
+import {
+  Button,
+  Grid,
+  Image,
+  Rating,
+  Stack,
+  Text,
+  Title,
+  Group,
+  Paper,
+} from "@mantine/core";
+import { ChevronLeft } from "lucide-react";
 
 const PLACEHOLDER_BOOK_COVER_URL =
   "https://placehold.co/500x500/f8dfcc/703c1c/png?text=No+Cover";
@@ -108,8 +118,13 @@ export default function BookDetail() {
   return (
     <article>
       {book ? (
-        <>
-          <header style={{ padding: "2rem 4rem" }}>
+        <Paper p={24}>
+          <header style={{ paddingBottom: "2rem" }}>
+            <Link to="/books" style={{ display: "block" }}>
+              <Button variant="outline" radius={"xl"}>
+                <ChevronLeft strokeWidth={4} />
+              </Button>
+            </Link>
             <Title order={2} c={"copper.6"}>
               {book.title}
             </Title>
@@ -129,86 +144,67 @@ export default function BookDetail() {
             </Grid.Col>
             <Grid.Col span={{ base: 12, md: 8 }}>
               <Stack component={"dl"}>
-                {book.genre && (
-                  <>
-                    {descriptionSection({
-                      title: "Genre",
-                      desc: `${book.genre}`,
-                    })}
-                  </>
-                )}
+                {book.genre &&
+                  descriptionSection({
+                    title: "Genre",
+                    desc: `${book.genre}`,
+                  })}
 
-                {book.publishedYear && (
-                  <>
-                    {descriptionSection({
-                      title: "Published Year",
-                      desc: `${book.publishedYear}`,
-                    })}
-                  </>
-                )}
-                {book.averageRating && (
-                  <>
-                    {descriptionSection({
-                      title: "Rating",
-                      desc: <Rating value={book.averageRating} />,
-                    })}
-                  </>
-                )}
-                <dt>Description</dt>
-                <dd>{book.description}</dd>
+                {book.publishedYear &&
+                  descriptionSection({
+                    title: "Published Year",
+                    desc: `${book.publishedYear}`,
+                  })}
+                {book.averageRating >= 0 &&
+                  descriptionSection({
+                    title: "Rating",
+                    desc: (
+                      <Rating
+                        contentEditable={false}
+                        value={book.averageRating}
+                      />
+                    ),
+                  })}
+
+                {descriptionSection({
+                  title: "Description",
+                  desc: `${book.description}`,
+                })}
               </Stack>
             </Grid.Col>
           </Grid>
-        </>
+          <footer style={{ marginTop: "2rem" }}>
+            <AddToShelfDropdown shelves={shelves} book={book} />
+            {isOwner && (
+              <Stack mt={24}>
+                <Group>
+                  <Link
+                    to={`/books/${id}/edit`}
+                    role="button"
+                    className="secondary"
+                  >
+                    <Button>Edit</Button>
+                  </Link>
+
+                  <Button bg="brick.7" onClick={handleDelete}>
+                    Delete
+                  </Button>
+                </Group>
+                <UploadFieldWithProgress
+                  title="Update Cover Image"
+                  uploadHandler={handleCoverUpload}
+                  isUploading={isUploading}
+                  uploadProgress={uploadProgress}
+                />
+              </Stack>
+            )}
+          </footer>
+        </Paper>
       ) : (
         "loading book..."
       )}
 
-      <footer style={{ marginTop: "2rem", padding: "2rem 4rem" }}>
-        <AddToShelfDropdown shelves={shelves} book={book} />
-        {isOwner && (
-          <div
-            style={{
-              marginTop: "2rem",
-              display: "flex",
-              flexDirection: "column",
-              gap: "1rem",
-            }}
-          >
-            <div style={{ display: "flex", gap: "1rem" }}>
-              <Link
-                to={`/books/${id}/edit`}
-                role="button"
-                className="secondary"
-              >
-                Edit
-              </Link>
-
-              <button
-                onClick={handleDelete}
-                data-theme="secondary"
-                style={{ backgroundColor: "red", borderColor: "red" }}
-              >
-                Delete
-              </button>
-            </div>
-            <UploadFieldWithProgress
-              title="Update Cover Image"
-              uploadHandler={handleCoverUpload}
-              isUploading={isUploading}
-              uploadProgress={uploadProgress}
-            />
-          </div>
-        )}
-
-        <Reviews bookId={id} />
-        <Link
-          style={{ display: "inline-block", marginTop: "2rem" }}
-          to="/books"
-        >
-          Back to Books
-        </Link>
-      </footer>
+      <Reviews bookId={id} />
     </article>
   );
 }

@@ -83,7 +83,6 @@ export default function BookCard({ book, selectionMode, onAddBookToShelf }) {
       <Card
         key={book._id}
         className="book-card"
-        bg="light-dark(var(--mantine-color-ink-1), #2a1e15)"
         withBorder
       >
         <CardContent />
@@ -99,7 +98,6 @@ export default function BookCard({ book, selectionMode, onAddBookToShelf }) {
       state={{ book }}
     >
       <Card
-        bg="light-dark(var(--mantine-color-ink-1), #2a1e15)"
         withBorder
       >
         <CardContent />

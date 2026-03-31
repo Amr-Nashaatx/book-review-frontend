@@ -99,7 +99,7 @@ export default function Login() {
                 />
 
                 {formErrors.general && (
-                  <Alert color="red" variant="light" radius="md">
+                  <Alert color="brick" variant="light" radius="md">
                     {formErrors.general}
                   </Alert>
                 )}

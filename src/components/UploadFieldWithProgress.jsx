@@ -1,3 +1,5 @@
+import { FileInput, Progress, Stack } from "@mantine/core";
+
 export default function UploadFieldWithProgress({
   title,
   uploadHandler,
@@ -6,17 +8,17 @@ export default function UploadFieldWithProgress({
   uploadProgress = 0,
 }) {
   return (
-    <div style={{ marginTop: "1rem" }}>
+    <Stack mt={12} w={200}>
       <label htmlFor="upload">{title}</label>
-      <input
+      <FileInput
         id="upload"
-        name={name}
-        type="file"
         accept="image/*"
+        name={name}
         onChange={uploadHandler}
         disabled={isUploading}
       />
-      {isUploading && <progress value={uploadProgress} max="100" />}
-    </div>
+
+      {isUploading && <Progress value={uploadProgress} striped animated />}
+    </Stack>
   );
 }
