@@ -5,13 +5,25 @@ import { useAuthStore } from "../stores/authStore";
 import NewShelfModal from "../components/NewShelfModal";
 import { sendRequest } from "../utils/sendRequest";
 import { Navigate, useNavigate } from "react-router-dom";
-import Toast from "../components/Toast/Toast";
 import Shelf from "../components/Shelf/Shelf";
-import BookCard from "../components/BookCard/BookCard";
 
 import { useFetchMyBooks } from "../hooks/useFetchMyBooks";
 import { useFetchCurrentAuthor } from "../hooks/useFetchCurrentAuthor.js";
 import EditableField from "../components/EditableField";
+import {
+  Text,
+  Title,
+  Group,
+  Stack,
+  SimpleGrid,
+  Card,
+  Button,
+  Grid,
+} from "@mantine/core";
+
+import { toast } from "react-toastify";
+import { useBooksStore } from "../stores/booksStore.js";
+import PublishedBookCard from "../components/PublishedBookCard.jsx";
 
 const rowStyle = {
   display: "flex",
@@ -23,15 +35,14 @@ const rowStyle = {
 
 export default function Profile() {
   const [isNewShelfModalOpen, setIsNewShelfModalOpen] = useState(false);
-  const [toastMessage, setToastMessage] = useState("");
 
   const { fetchShelves, shelves, setShelves } = useFetchShelves();
+  const books = useBooksStore((s) => s.booksData.books);
   const { fetchMyBooks, myBooks } = useFetchMyBooks();
   const { currentUser, isLoggedIn, setCurrentUser } = useAuthStore();
   const { fetchCurrentAuthor, author } = useFetchCurrentAuthor();
 
   const navigate = useNavigate();
-
   const {
     removingId: shelfRemovingId,
     collapsingId: shelfCollapsingId,
@@ -46,12 +57,12 @@ export default function Profile() {
         body: { name, description },
         params: { withCredentials: true },
       });
-      setToastMessage("Shelf created successfully.");
+      toast.success("Shelf created successfully.");
       setIsNewShelfModalOpen(false);
       navigate(`/shelves/${shelf._id}`);
     } catch (error) {
       console.error("Failed to create shelf.", error);
-      setToastMessage("Failed to create shelf.");
+      toast.error("Failed to create shelf.");
     }
   };
 
@@ -63,10 +74,10 @@ export default function Profile() {
         body: { [fieldName]: newValue },
       });
       setCurrentUser(newUser);
-      setToastMessage(`${fieldName} updated successfully.`);
+      toast.success(`${fieldName} updated successfully.`);
     } catch (error) {
       console.error("Failed to update user field.", error);
-      setToastMessage("Failed to update.");
+      toast.error("Failed to update.");
     }
   };
   const handleRemoveShelf = async (shelfId) => {
@@ -79,7 +90,7 @@ export default function Profile() {
           method: "delete",
           params: { withCredentials: true },
         });
-        setToastMessage("Shelf removed successfully.");
+        toast.success("Shelf removed successfully.");
       });
     } catch (error) {
       console.log(error);
@@ -92,6 +103,7 @@ export default function Profile() {
   useEffect(() => {
     fetchShelves();
     if (currentUser.role === "author") {
+      console.log("FETCHING AUTHOR");
       fetchMyBooks();
       fetchCurrentAuthor();
     }
@@ -114,10 +126,10 @@ export default function Profile() {
         body,
       });
       fetchCurrentAuthor();
-      setToastMessage(`${fieldName.split(".").pop()} updated successfully.`);
+      toast.success(`${fieldName.split(".").pop()} updated successfully.`);
     } catch (error) {
       console.error("Failed to update author field.", error);
-      setToastMessage("Failed to update.");
+      toast.error("Failed to update.");
     }
   };
   const updateAuthorBio = async (newBio) => {
@@ -128,170 +140,179 @@ export default function Profile() {
         body: { bio: newBio },
       });
       fetchCurrentAuthor();
-      setToastMessage("Bio updated successfully.");
+      toast.success("Bio updated successfully.");
     } catch (error) {
       console.error("Failed to update author bio.", error);
-      setToastMessage("Failed to update bio.");
+      toast.error("Failed to update bio.");
     }
   };
+
   if (!isLoggedIn) {
     return <Navigate to="/login" />;
   }
 
   return (
     <main className="container">
-      <hgroup style={{ textAlign: "center", marginBottom: "3rem" }}>
-        <h1>Your Profile</h1>
-        Welcome back,
-        <EditableField
-          value={currentUser.name}
-          onSave={(val) => updateField("name", val)}
-        />
-        !
-      </hgroup>
+      <Card p={"xl"} mb={"md"}>
+        <Stack align="center">
+          <Title order={2} fz={32} c={"copper.6"}>
+            Your Profile
+          </Title>
+          <Group gap={0}>
+            <Text fz={"lg"}> Welcome back, </Text>
+            <EditableField
+              fz={28}
+              fw={"bold"}
+              value={currentUser.name}
+              onSave={(val) => updateField("name", val)}
+            />
+          </Group>
+        </Stack>
 
-      <div className="grid">
-        <article>
-          <header>
-            <strong>Account Details</strong>
-          </header>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              marginBottom: "10px",
-            }}
-          >
-            <span>
-              <strong>Name:</strong>
-            </span>
-            <span>
-              {currentUser.name}{" "}
-              {currentUser.role === "author" && author && `(${author.penName})`}
-            </span>
-          </div>
-          <div style={{ display: "flex", justifyContent: "space-between" }}>
-            <span>
-              <strong>Email:</strong>
-            </span>
-            <span>{currentUser.email}</span>
-          </div>
+        <Grid>
+          <Grid.Col span={{ base: "12", md: "12" }}>
+            <Text fw={"bold"} fz={28} c={"copper.5"} mt={32} mb={16}>
+              Account Details
+            </Text>
+
+            <Group>
+              <Text fw={"bold"} fz={"md"}>
+                Name:{" "}
+              </Text>
+              <Text fz={"md"}>
+                {currentUser.name}{" "}
+                {currentUser.role === "author" &&
+                  author &&
+                  `(${author.penName})`}
+              </Text>
+            </Group>
+
+            <Group>
+              <Text fw={"bold"} fz={"md"}>
+                Email:{" "}
+              </Text>
+              <Text fz={"md"}>{currentUser.email}</Text>
+            </Group>
+          </Grid.Col>
+
           {currentUser.role === "author" && (
-            <footer>
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "0.5rem",
-                }}
-              >
-                <strong>Bio:</strong>
+            <Grid.Col span={{ base: "12", md: "6" }}>
+              <Text fw={"bold"} fz={"md"}>
+                Bio:
+              </Text>
+              <EditableField
+                type="textarea"
+                value={author.bio}
+                onSave={updateAuthorBio}
+              />
+            </Grid.Col>
+          )}
+
+          {currentUser.role === "author" && author && (
+            <Grid.Col span={{ base: "12", md: "6" }}>
+              <Text fw={"bold"} fz={28} c={"copper.5"} mt={32} mb={16}>
+                Social Presence
+              </Text>
+              <div style={rowStyle}>
+                <span>
+                  <strong>Website:</strong>
+                </span>
                 <EditableField
-                  type="textarea"
-                  value={author.bio}
-                  onSave={updateAuthorBio}
+                  value={author.socialLinks?.website}
+                  onSave={(v) => updateAuthorField("socialLinks.website", v)}
                 />
               </div>
-            </footer>
-          )}
-        </article>
-        {currentUser.role === "author" && author && (
-          <article>
-            <header>
-              <strong>Social Presence</strong>
-            </header>
-            <div style={rowStyle}>
-              <span>
-                <strong>Website:</strong>
-              </span>
-              <EditableField
-                value={author.socialLinks?.website}
-                onSave={(v) => updateAuthorField("socialLinks.website", v)}
-              />
-            </div>
-            <div style={rowStyle}>
-              <span>
-                <strong>X (Twitter):</strong>
-              </span>
-              <EditableField
-                value={author.socialLinks?.x}
-                onSave={(v) => updateAuthorField("socialLinks.x", v)}
-              />
-            </div>
-            <div style={rowStyle}>
-              <span>
-                <strong>Instagram:</strong>
-              </span>
-              <EditableField
-                value={author.socialLinks?.instagram}
-                onSave={(v) => updateAuthorField("socialLinks.instagram", v)}
-              />
-            </div>
-            <div style={rowStyle}>
-              <span>
-                <strong>LinkedIn:</strong>
-              </span>
-              <EditableField
-                value={author.socialLinks?.linkedIn}
-                onSave={(v) => updateAuthorField("socialLinks.linkedIn", v)}
-              />
-            </div>
-          </article>
-        )}
-      </div>
-
-      <hr />
-
-      <div className="grid">
-        <section>
-          <h2>Shelves</h2>
-          <p>Create new shelves to organize your reading list.</p>
-          <button
-            className="contrast"
-            style={{ marginBottom: "2rem" }}
-            onClick={() => setIsNewShelfModalOpen(true)}
-          >
-            New Shelf +
-          </button>
-          {shelves?.length === 0 && <p>You haven't created any shelves yet.</p>}
-          <ul style={{ listStyle: "none", padding: 0 }}>
-            {shelves.map((shelf) => (
-              <Shelf
-                key={shelf._id}
-                style={{ marginBottom: "1rem" }}
-                shelf={shelf}
-                handleRemoveShelf={handleRemoveShelf}
-                isRemoving={shelfRemovingId === shelf._id}
-                isCollapsing={shelfCollapsingId === shelf._id}
-              />
-            ))}
-          </ul>
-        </section>
-
-        {currentUser.role === "author" && (
-          <section>
-            <h2>Published Books</h2>
-            {!myBooks.length ? (
-              <p className="secondary">No books published yet.</p>
-            ) : (
-              <div style={{ display: "grid", gap: "1rem" }}>
-                {myBooks.map((book) => (
-                  <BookCard book={book} key={book._id} />
-                ))}
+              <div style={rowStyle}>
+                <span>
+                  <strong>X (Twitter):</strong>
+                </span>
+                <EditableField
+                  value={author.socialLinks?.x}
+                  onSave={(v) => updateAuthorField("socialLinks.x", v)}
+                />
               </div>
+              <div style={rowStyle}>
+                <span>
+                  <strong>Instagram:</strong>
+                </span>
+                <EditableField
+                  value={author.socialLinks?.instagram}
+                  onSave={(v) => updateAuthorField("socialLinks.instagram", v)}
+                />
+              </div>
+              <div style={rowStyle}>
+                <span>
+                  <strong>LinkedIn:</strong>
+                </span>
+                <EditableField
+                  value={author.socialLinks?.linkedIn}
+                  onSave={(v) => updateAuthorField("socialLinks.linkedIn", v)}
+                />
+              </div>
+            </Grid.Col>
+          )}
+        </Grid>
+      </Card>
+
+      <Grid>
+        <Grid.Col>
+          <Card>
+            <Text fw={"bold"} fz={28} c={"copper.5"} mt={32} mb={16}>
+              Shelves
+            </Text>
+            <Text fz={"lg"} mb={"md"}>
+              Create new shelves to organize your reading list.
+            </Text>
+            {shelves?.length === 0 && (
+              <p>You haven't created any shelves yet.</p>
             )}
-          </section>
-        )}
-      </div>
+            <ul style={{ listStyle: "none", padding: 0 }}>
+              <Button
+                className="contrast"
+                onClick={() => setIsNewShelfModalOpen(true)}
+              >
+                New Shelf +
+              </Button>
+              {shelves.map((shelf) => (
+                <Shelf
+                  key={shelf._id}
+                  style={{ marginBottom: "1rem" }}
+                  shelf={shelf}
+                  handleRemoveShelf={handleRemoveShelf}
+                  isRemoving={shelfRemovingId === shelf._id}
+                  isCollapsing={shelfCollapsingId === shelf._id}
+                />
+              ))}
+            </ul>
+          </Card>
+        </Grid.Col>
+        <Grid.Col>
+          {currentUser.role === "author" && (
+            <Card>
+              <Title fw={"bold"} fz={28} c={"copper.5"} mt={32} mb={16}>
+                Published Books
+              </Title>
+              {!myBooks.length ? (
+                <Text fz={"lg"} mb={"md"}>
+                  No books published yet.
+                </Text>
+              ) : (
+                <SimpleGrid cols={{ base: 2, sm: 2, md: 3 }} spacing="lg">
+                  {books.map((book) => (
+                    <PublishedBookCard book={book} key={book._id} />
+                  ))}
+                </SimpleGrid>
+              )}
+            </Card>
+          )}
+        </Grid.Col>
+      </Grid>
 
       {isNewShelfModalOpen && (
         <NewShelfModal
           onClose={() => setIsNewShelfModalOpen(false)}
           onCreate={onCreateShelf}
         />
-      )}
-      {toastMessage && (
-        <Toast message={toastMessage} onClose={() => setToastMessage("")} />
       )}
     </main>
   );

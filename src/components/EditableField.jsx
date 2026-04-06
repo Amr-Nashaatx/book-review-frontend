@@ -1,6 +1,14 @@
+import { Button, Group, Text, Textarea, TextInput } from "@mantine/core";
 import { useEffect, useRef, useState } from "react";
+import { Pencil } from "lucide-react";
 
-export default function EditableField({ value, onSave, type = "text" }) {
+export default function EditableField({
+  value,
+  onSave,
+  type = "text",
+  style,
+  ...props
+}) {
   const [isEditing, setIsEditing] = useState(false);
   const [currentValue, setCurrentValue] = useState(value);
   const inputRef = useRef(null);
@@ -21,15 +29,15 @@ export default function EditableField({ value, onSave, type = "text" }) {
     return (
       <div style={{ width: "100%" }}>
         {type === "textarea" ? (
-          <textarea
+          <Textarea
             ref={inputRef}
             value={currentValue}
+            size="xl"
             onChange={(e) => setCurrentValue(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && handleSave()}
-            style={{ marginBottom: "0.5rem" }}
           />
         ) : (
-          <input
+          <TextInput
             ref={inputRef}
             type="text"
             value={currentValue}
@@ -38,37 +46,40 @@ export default function EditableField({ value, onSave, type = "text" }) {
             style={{ margin: 0, display: "inline-block" }}
           />
         )}
-        <div style={{ display: "flex", gap: "0.5rem" }}>
-          <button
+        <Group mt={12}>
+          <Button
             className="outline"
             onClick={handleSave}
             style={{ padding: "2px 10px", width: "auto" }}
           >
             Save
-          </button>
-          <button
+          </Button>
+          <Button
             className="outline secondary"
             onClick={() => setIsEditing(false)}
-            style={{ padding: "2px 10px", width: "auto" }}
+            variant="outline"
           >
             Cancel
-          </button>
-        </div>
+          </Button>
+        </Group>
       </div>
     );
   }
 
   return (
-    <span
+    <Text
       onClick={() => setIsEditing(true)}
+      ml={"md"}
       style={{
         cursor: "pointer",
-        borderBottom: "1px dashed var(--pico-muted-color)",
+        borderBottom: "1px dashed var(--mantine-color-copper-7)",
         display: "inline-block",
+        ...style,
       }}
+      {...props}
     >
       {value}
-      <small style={{ marginLeft: "10px", opacity: 0.6 }}>✎</small>
-    </span>
+      <Pencil size={16} style={{ marginLeft: ".3rem" }} />
+    </Text>
   );
 }

@@ -5,13 +5,13 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 export default function Layout() {
-  const colorScheme = useComputedColorScheme('light');
+  const colorScheme = useComputedColorScheme("light");
   return (
     <AppShell header={{ height: 76 }} padding="md">
       <AppShell.Header>
         <Navbar />
       </AppShell.Header>
-      <AppShell.Main>
+      <AppShell.Main pt={120}>
         <Container size="lg">
           <Outlet />
         </Container>
@@ -26,5 +26,3 @@ export default function Layout() {
     </AppShell>
   );
 }
-
-

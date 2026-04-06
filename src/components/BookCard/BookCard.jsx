@@ -11,33 +11,6 @@ import {
 } from "@mantine/core";
 import "./BookCard.css";
 
-function Demo() {
-  return (
-    <Card shadow="sm" padding="lg" radius="md" withBorder>
-      <Card.Section>
-        <Image
-          src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-8.png"
-          height={160}
-          alt="Norway"
-        />
-      </Card.Section>
-
-      <Group justify="space-between" mt="md" mb="xs">
-        <Text fw={500}>Norway Fjord Adventures</Text>
-        <Badge color="pink">On Sale</Badge>
-      </Group>
-
-      <Text size="sm" c="dimmed">
-        With Fjord Tours you can explore more of the magical fjord landscapes
-        with tours and activities on and around the fjords of Norway
-      </Text>
-
-      <Button color="blue" fullWidth mt="md" radius="md">
-        Book classic tour now
-      </Button>
-    </Card>
-  );
-}
 export default function BookCard({ book, selectionMode, onAddBookToShelf }) {
   const CardContent = () => (
     <>
@@ -80,11 +53,7 @@ export default function BookCard({ book, selectionMode, onAddBookToShelf }) {
 
   if (selectionMode) {
     return (
-      <Card
-        key={book._id}
-        className="book-card"
-        withBorder
-      >
+      <Card key={book._id} className="book-card" withBorder>
         <CardContent />
       </Card>
     );
@@ -97,12 +66,9 @@ export default function BookCard({ book, selectionMode, onAddBookToShelf }) {
       className="book-card"
       state={{ book }}
     >
-      <Card
-        withBorder
-      >
+      <Card withBorder>
         <CardContent />
       </Card>
     </Link>
   );
 }
-

@@ -98,6 +98,44 @@
   --app-menu-hover-text: var(--mantine-color-copper-8);
   --app-menu-muted: var(--mantine-color-ink-6);
 
+  --app-input-bg: color-mix(
+    in srgb,
+    var(--mantine-color-copper-0) 38%,
+    white 62%
+  );
+  --app-input-border: color-mix(
+    in srgb,
+    var(--mantine-color-copper-3) 34%,
+    white 66%
+  );
+  --app-input-border-hover: color-mix(
+    in srgb,
+    var(--mantine-color-copper-4) 42%,
+    white 58%
+  );
+  --app-input-focus-ring: 0 0 0 1px var(--mantine-color-copper-4),
+    0 10px 26px rgba(197, 106, 52, 0.14);
+  --app-input-placeholder: var(--app-surface-muted-text);
+  --app-input-label: var(--mantine-color-copper-7);
+  --app-input-description: var(--app-surface-muted-text);
+
+  --app-fieldset-bg: color-mix(
+    in srgb,
+    var(--mantine-color-copper-0) 28%,
+    white 72%
+  );
+  --app-fieldset-border: color-mix(
+    in srgb,
+    var(--mantine-color-copper-3) 30%,
+    white 70%
+  );
+  --app-fieldset-legend-bg: color-mix(
+    in srgb,
+    var(--mantine-color-copper-0) 68%,
+    white 32%
+  );
+  --app-fieldset-legend-text: var(--mantine-color-copper-7);
+
   --app-danger-bg: color-mix(
     in srgb,
     var(--mantine-color-brick-0) 76%,
@@ -202,6 +240,44 @@
   );
   --app-menu-hover-text: var(--mantine-color-copper-0);
   --app-menu-muted: var(--mantine-color-copper-3);
+
+  --app-input-bg: color-mix(
+    in srgb,
+    var(--mantine-color-copper-9) 32%,
+    var(--mantine-color-dark-6) 68%
+  );
+  --app-input-border: color-mix(
+    in srgb,
+    var(--mantine-color-copper-8) 42%,
+    var(--mantine-color-dark-4) 58%
+  );
+  --app-input-border-hover: color-mix(
+    in srgb,
+    var(--mantine-color-copper-7) 48%,
+    var(--mantine-color-dark-4) 52%
+  );
+  --app-input-focus-ring: 0 0 0 1px var(--mantine-color-copper-5),
+    0 10px 28px rgba(0, 0, 0, 0.28);
+  --app-input-placeholder: var(--mantine-color-copper-3);
+  --app-input-label: var(--mantine-color-copper-2);
+  --app-input-description: var(--mantine-color-copper-3);
+
+  --app-fieldset-bg: color-mix(
+    in srgb,
+    var(--mantine-color-copper-9) 24%,
+    var(--mantine-color-dark-6) 76%
+  );
+  --app-fieldset-border: color-mix(
+    in srgb,
+    var(--mantine-color-copper-8) 40%,
+    var(--mantine-color-dark-4) 60%
+  );
+  --app-fieldset-legend-bg: color-mix(
+    in srgb,
+    var(--mantine-color-copper-9) 42%,
+    var(--mantine-color-dark-5) 58%
+  );
+  --app-fieldset-legend-text: var(--mantine-color-copper-1);
 
   --toastify-color-dark: color-mix(
     in srgb,

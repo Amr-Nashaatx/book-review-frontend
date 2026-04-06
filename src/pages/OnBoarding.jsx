@@ -1,8 +1,18 @@
 import { useNavigate } from "react-router-dom";
 import { useSubmitForm } from "../hooks/useSubmitForm";
 import { useState } from "react";
-import ErrorMsg from "../components/ErrorMsg";
 import Toast from "../components/Toast/Toast";
+import {
+  TextInput,
+  Title,
+  Group,
+  Fieldset,
+  Stack,
+  Button,
+  Textarea,
+  Card,
+} from "@mantine/core";
+import Error from "../components/Error";
 
 export function OnBoarding() {
   const [toastMessage, setToastMessage] = useState("");
@@ -55,87 +65,86 @@ export function OnBoarding() {
 
   return (
     <article>
-      <header style={{ padding: "2rem 5rem" }}>
-        <h2>Become An Author</h2>
-      </header>
+      <Card padding={"xl"}>
+        <Title c={"copper.6"} fz={32} ta={"center"}>
+          Become An Author
+        </Title>
 
-      <form onSubmit={handleSubmit} style={{ padding: "2rem 4rem" }}>
-        <label>
-          Pen Name
-          <input
-            name="penName"
-            value={authorData.penName}
-            onChange={handleChange}
-            aria-invalid={formErrors.penName ? "true" : undefined}
-            required
-          />
-        </label>
-        {formErrors.penName && <ErrorMsg message={formErrors.penName} />}
-
-        <label>
-          Bio
-          <input
-            name="bio"
-            value={authorData.bio}
-            onChange={handleChange}
-            aria-invalid={formErrors.bio ? "true" : undefined}
-          />
-        </label>
-        {formErrors.bio && <ErrorMsg message={formErrors.bio} />}
-
-        <fieldset>
-          <legend>
-            <strong>Social Links</strong>
-          </legend>
-
-          <input
-            name="socialLinks-website"
-            placeholder="Website"
-            value={authorData.socialLinks.website}
-            onChange={handleChange}
-            aria-invalid={
-              formErrors["socialLinks.website"] ? "true" : undefined
-            }
-          />
-          {formErrors["socialLinks.website"] && (
-            <ErrorMsg message={formErrors["socialLinks.website"]} />
-          )}
-
-          <div className="grid">
-            <div>
-              <input
-                name="socialLinks-x"
-                placeholder="X (Twitter)"
-                value={authorData.socialLinks.x}
+        <form onSubmit={handleSubmit}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              flexDirection: "column",
+            }}
+          >
+            <Stack justify="center" w={{ base: "100%", md: "80%", lg: "60%" }}>
+              <TextInput
+                label="Pen Name"
+                name="penName"
+                value={authorData.penName}
                 onChange={handleChange}
-                aria-invalid={formErrors["socialLinks.x"] ? "true" : undefined}
+                aria-invalid={formErrors.penName ? "true" : undefined}
+                required
+                error={formErrors.penName}
               />
-              {formErrors["socialLinks.x"] && (
-                <ErrorMsg message={formErrors["socialLinks.x"]} />
-              )}
-            </div>
 
-            <div>
-              <input
-                name="socialLinks-instagram"
-                placeholder="Instagram"
-                value={authorData.socialLinks.instagram}
+              <Textarea
+                label="Bio"
+                name="bio"
+                value={authorData.bio}
                 onChange={handleChange}
-                aria-invalid={
-                  formErrors["socialLinks.instagram"] ? "true" : undefined
-                }
+                aria-invalid={formErrors.bio ? "true" : undefined}
+                error={formErrors.bio}
+                minRows={5}
               />
-              {formErrors["socialLinks.instagram"] && (
-                <ErrorMsg message={formErrors["socialLinks.instagram"]} />
-              )}
-            </div>
+
+              <Fieldset legend="Social Links" mt={"md"}>
+                <Stack>
+                  <TextInput
+                    name="socialLinks-website"
+                    placeholder="Website"
+                    value={authorData.socialLinks.website}
+                    onChange={handleChange}
+                    aria-invalid={
+                      formErrors["socialLinks.website"] ? "true" : undefined
+                    }
+                    error={formErrors["socialLinks.website"]}
+                  />
+
+                  <TextInput
+                    name="socialLinks-x"
+                    placeholder="X (Twitter)"
+                    value={authorData.socialLinks.x}
+                    onChange={handleChange}
+                    aria-invalid={
+                      formErrors["socialLinks.x"] ? "true" : undefined
+                    }
+                    error={formErrors["socialLinks.x"]}
+                  />
+
+                  <TextInput
+                    name="socialLinks-instagram"
+                    placeholder="Instagram"
+                    value={authorData.socialLinks.instagram}
+                    onChange={handleChange}
+                    aria-invalid={
+                      formErrors["socialLinks.instagram"] ? "true" : undefined
+                    }
+                    error={formErrors["socialLinks.instagram"]}
+                  />
+                </Stack>
+              </Fieldset>
+            </Stack>
+
+            {formErrors.general && <Error message={formErrors.general} />}
+
+            <Button mt={"lg"} type="submit">
+              Complete Onboarding
+            </Button>
           </div>
-        </fieldset>
-
-        {formErrors.general && <ErrorMsg message={formErrors.general} />}
-
-        <button type="submit">Complete Onboarding</button>
-      </form>
+        </form>
+      </Card>
       {toastMessage && (
         <Toast message={toastMessage} onClose={() => setToastMessage(null)} />
       )}

@@ -1,4 +1,19 @@
-import { Button, Card, Menu, Paper, createTheme } from "@mantine/core";
+import {
+  Button,
+  Card,
+  Fieldset,
+  FileInput,
+  Input,
+  InputWrapper,
+  Menu,
+  PasswordInput,
+  Paper,
+  Select,
+  TextInput,
+  Textarea,
+  Title,
+  createTheme,
+} from "@mantine/core";
 
 const surfaceStyles = {
   root: {
@@ -9,6 +24,11 @@ const surfaceStyles = {
     transition:
       "background-color 180ms ease, border-color 180ms ease, box-shadow 180ms ease, color 180ms ease",
   },
+};
+
+const sharedInputDefaultProps = {
+  w: "100%",
+  maw: 760,
 };
 
 export const bookverseTheme = createTheme({
@@ -70,6 +90,7 @@ export const bookverseTheme = createTheme({
     fontWeight: "600",
   },
   components: {
+    Title: Title.extend({}),
     Paper: Paper.extend({
       styles: () => surfaceStyles,
     }),
@@ -80,6 +101,21 @@ export const bookverseTheme = createTheme({
       defaultProps: {
         radius: "l",
       },
+    }),
+    TextInput: TextInput.extend({
+      defaultProps: sharedInputDefaultProps,
+    }),
+    Textarea: Textarea.extend({
+      defaultProps: sharedInputDefaultProps,
+    }),
+    PasswordInput: PasswordInput.extend({
+      defaultProps: sharedInputDefaultProps,
+    }),
+    Select: Select.extend({
+      defaultProps: sharedInputDefaultProps,
+    }),
+    FileInput: FileInput.extend({
+      defaultProps: sharedInputDefaultProps,
     }),
     Menu: Menu.extend({
       styles: () => ({
@@ -117,6 +153,59 @@ export const bookverseTheme = createTheme({
         },
         itemSection: {
           color: "var(--app-menu-muted)",
+        },
+      }),
+    }),
+    Input: Input.extend({
+      styles: () => ({
+        input: {
+          background: "var(--app-input-bg)",
+          borderColor: "var(--app-input-border)",
+          color: "var(--mantine-color-text)",
+          transition:
+            "background-color 180ms ease, border-color 180ms ease, box-shadow 180ms ease, color 180ms ease",
+          "&::placeholder": {
+            color: "var(--app-input-placeholder)",
+          },
+          "&:hover": {
+            borderColor: "var(--app-input-border-hover)",
+          },
+          "&:focus, &[data-focused]": {
+            borderColor: "var(--mantine-color-copper-5)",
+            boxShadow: "var(--app-input-focus-ring)",
+          },
+        },
+      }),
+    }),
+    InputWrapper: InputWrapper.extend({
+      styles: () => ({
+        label: {
+          color: "var(--app-input-label)",
+          fontWeight: 600,
+        },
+        description: {
+          color: "var(--app-input-description)",
+        },
+      }),
+    }),
+    Fieldset: Fieldset.extend({
+      styles: () => ({
+        root: {
+          background: "var(--app-fieldset-bg)",
+          borderColor: "var(--app-fieldset-border)",
+          color: "var(--mantine-color-text)",
+          boxShadow: "var(--app-surface-shadow)",
+          transition:
+            "background-color 180ms ease, border-color 180ms ease, box-shadow 180ms ease, color 180ms ease",
+        },
+        legend: {
+          background: "var(--app-fieldset-legend-bg)",
+          color: "var(--app-fieldset-legend-text)",
+          border: "1px solid var(--app-fieldset-border)",
+          borderRadius: "999px",
+          fontWeight: 700,
+          letterSpacing: "0.04em",
+          paddingInline: "0.75rem",
         },
       }),
     }),

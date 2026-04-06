@@ -101,9 +101,9 @@ export default function Books() {
   };
 
   return (
-    <article style={{ padding: "4rem" }}>
+    <article>
       <header>
-        <Title order={2} c="copper.6">
+        <Title order={2} c="copper.6" fz={32}>
           Books
         </Title>
       </header>
