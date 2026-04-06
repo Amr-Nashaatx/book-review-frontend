@@ -1,14 +1,30 @@
-export default function UploadField({ title, onChange, name }) {
+import { FileInput } from "@mantine/core";
+
+export default function UploadField({
+  title,
+  onChange,
+  name,
+  error,
+  description,
+}) {
   return (
-    <div style={{ marginTop: "1rem" }}>
-      <label htmlFor="upload">{title}</label>
-      <input
-        id="upload"
-        name={name}
-        type="file"
-        accept="image/*"
-        onChange={onChange}
-      />
-    </div>
+    <FileInput
+      label={title}
+      name={name}
+      accept="image/*"
+      onChange={(file) =>
+        onChange({
+          target: {
+            name,
+            type: "file",
+            files: file ? [file] : [],
+          },
+        })
+      }
+      error={error}
+      description={description}
+      placeholder="Choose a cover image"
+      clearable
+    />
   );
 }

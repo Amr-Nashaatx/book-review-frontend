@@ -4,6 +4,18 @@ import Error from "../components/Error";
 import { useNavigate, useParams } from "react-router-dom";
 import { sendRequest } from "../utils/sendRequest";
 import UploadField from "../components/UploadField";
+import {
+  Button,
+  Card,
+  Group,
+  Image,
+  NumberInput,
+  Stack,
+  Text,
+  TextInput,
+  Textarea,
+  Title,
+} from "@mantine/core";
 
 export default function BookForm({ mode = "create" }) {
   const { id } = useParams();
@@ -39,7 +51,7 @@ export default function BookForm({ mode = "create" }) {
   const navigate = useNavigate();
   const handleChange = (e) => {
     if (e.target.type === "file")
-      return setBook({ ...book, [e.target.name]: e.target.files[0] });
+      return setBook({ ...book, [e.target.name]: e.target.files?.[0] ?? "" });
     setBook({ ...book, [e.target.name]: e.target.value });
   };
 
@@ -57,78 +69,118 @@ export default function BookForm({ mode = "create" }) {
 
   return (
     <article>
-      <header style={{ padding: "2rem 5rem" }}>
-        <h2>{isEdit ? "Edit Book" : "Add a New Book"}</h2>
-      </header>
+      <Card padding="xl">
+        <Title c="copper.6" fz={32} ta="center">
+          {isEdit ? "Edit Book" : "Add a New Book"}
+        </Title>
 
-      <form onSubmit={handleSubmit} style={{ padding: "2rem 4rem" }}>
-        <label>
-          Title
-          <input
-            name="title"
-            value={book.title}
-            onChange={handleChange}
-            required
-          />
-        </label>
-        {formErrors.title && <Error message={formErrors.title} />}
-        <label>
-          Genre
-          <input
-            name="genre"
-            value={book.genre}
-            onChange={handleChange}
-            required
-          />
-        </label>
-        {formErrors.genre && <Error message={formErrors.genre} />}
+        <form onSubmit={handleSubmit}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              flexDirection: "column",
+            }}
+          >
+            <Stack justify="center" w={{ base: "100%", md: "80%", lg: "60%" }}>
+              <TextInput
+                label="Title"
+                name="title"
+                value={book.title}
+                onChange={handleChange}
+                required
+                error={formErrors.title}
+              />
 
-        <label>
-          Description
-          <textarea
-            name="description"
-            value={book.description}
-            onChange={handleChange}
-            contentEditable={false}
-            required
-          />
-        </label>
-        {formErrors.description && <Error message={formErrors.description} />}
+              <TextInput
+                label="Genre"
+                name="genre"
+                value={book.genre}
+                onChange={handleChange}
+                required
+                error={formErrors.genre}
+              />
 
-        <label>
-          Published Year
-          <input
-            name="publishedYear"
-            type="number"
-            value={book.publishedYear}
-            onChange={handleChange}
-            required
-          />
-        </label>
-        {formErrors.publishedYear && (
-          <Error message={formErrors.publishedYear} />
-        )}
-        {isEdit && book.coverImage && (
-          <img src={book.coverImage} alt="book cover" width="80" height="80" />
-        )}
-        <UploadField title="Cover Image" name="cover" onChange={handleChange} />
-        <button
-          type="submit"
-          disabled={
-            isLoading ||
-            book.status === "preview" ||
-            book.status === "published"
-          }
-        >
-          {isEdit
-            ? isLoading
-              ? "Saving..."
-              : "Save Changes"
-            : isLoading
-              ? "Adding..."
-              : "Add Book"}
-        </button>
-      </form>
+              <Textarea
+                label="Description"
+                name="description"
+                value={book.description}
+                onChange={handleChange}
+                minRows={6}
+                required
+                error={formErrors.description}
+              />
+
+              <NumberInput
+                label="Published Year"
+                name="publishedYear"
+                value={book.publishedYear}
+                onChange={(value) =>
+                  setBook((prev) => ({
+                    ...prev,
+                    publishedYear: value ?? "",
+                  }))
+                }
+                allowDecimal={false}
+                clampBehavior="none"
+                required
+                error={formErrors.publishedYear}
+              />
+
+              <UploadField
+                title="Cover Image"
+                name="cover"
+                onChange={handleChange}
+                error={formErrors.cover}
+                description="Upload a clear cover image for your book."
+              />
+
+              {isEdit && book.coverImage && (
+                <Card withBorder radius="md" padding="sm">
+                  <Group align="flex-start" wrap="nowrap">
+                    <Image
+                      src={book.coverImage}
+                      alt="book cover"
+                      w={92}
+                      h={132}
+                      radius="sm"
+                    />
+                    <Stack gap={4}>
+                      <Text fw={700} c="copper.6">
+                        Current cover
+                      </Text>
+                      <Text size="sm" c="dimmed">
+                        Upload a new image only if you want to replace the
+                        existing cover.
+                      </Text>
+                    </Stack>
+                  </Group>
+                </Card>
+              )}
+            </Stack>
+
+            {formErrors.general && <Error message={formErrors.general} />}
+
+            <Button
+              mt="lg"
+              type="submit"
+              disabled={
+                isLoading ||
+                book.status === "preview" ||
+                book.status === "published"
+              }
+            >
+              {isEdit
+                ? isLoading
+                  ? "Saving..."
+                  : "Save Changes"
+                : isLoading
+                  ? "Adding..."
+                  : "Add Book"}
+            </Button>
+          </div>
+        </form>
+      </Card>
     </article>
   );
 }

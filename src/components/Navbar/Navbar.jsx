@@ -86,7 +86,7 @@ export default function Navbar() {
               mobileMenuOpened ? " app-navbar__actions--open" : ""
             }`}
           >
-            <NavLink to="/books" className={getNavLinkClassName}>
+            <NavLink to="/books" end className={getNavLinkClassName}>
               Books
             </NavLink>
 
