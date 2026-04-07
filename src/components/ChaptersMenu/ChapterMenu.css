@@ -1,57 +1,32 @@
-:root {
-  --chapter-menu-border-color: #232936;
-  --chapter-menu-heading-color: #969eaf;
-  --chatpter-item-background: rgb(24, 29, 39);
-  --chapter-item-divider-color: #303a49;
-  --chapter-item-hover-background: rgb(36, 43, 58);
-  --chapter-item-text-left-indentation: 0.5rem;
-}
-/* Chapter edit page layout */
 .chapter-edit {
   display: grid;
-  grid-template-columns: 220px 1fr;
-  grid-template-rows: repeat(5, 1fr);
-  column-gap: 1rem;
+  grid-template-columns: 280px minmax(0, 1fr);
+  align-items: start;
+  gap: 1rem;
   transition: grid-template-columns 0.3s ease;
 }
 
-/* Chapters side menu */
 .chapter-menu {
-  border: 1px solid var(--chapter-menu-border-color);
-  border-top-left-radius: 5px;
-  border-top-right-radius: 5px;
   display: flex;
   flex-direction: column;
-  padding-left: 0.5rem 0;
-  overflow: scroll;
+  min-height: 74vh;
 }
 
 .chapter-menu-boundary {
   min-height: 100%;
 }
 
-/* Menu header - always visible */
 .menu-header {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.5rem 0.3rem;
+  padding: 0.25rem 0.25rem 0.75rem;
   flex-shrink: 0;
 }
 
-.menu-header > button {
-  border: none;
-  padding: 0;
-  flex-shrink: 0;
-}
-
-.menu-header > h3 {
+.menu-header > p {
   display: flex;
   text-align: start;
-  padding-top: 1rem;
-  padding-bottom: 1rem;
-  padding-left: var(--chapter-item-text-left-indentation);
-  color: var(--chapter-menu-heading-color);
   margin: 0;
   white-space: nowrap;
   transition:
@@ -61,23 +36,22 @@
   overflow: hidden;
 }
 
-.menu-header > h3.hidden {
+.menu-header > p.hidden {
   opacity: 0;
   max-width: 0;
   padding: 0;
 }
 
-/* Menu content - collapsible */
 .menu-content {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  flex: 1;
+  gap: 0.75rem;
 }
 
-.menu-content > hr {
-  margin: 0;
-  border: none;
-  border-top: 1px solid var(--chapter-item-divider-color);
+.chapter-menu-scroll {
+  flex: 1;
 }
 
 .chapter-menu ul {
@@ -85,28 +59,107 @@
   margin: 0;
   list-style: none;
 }
+
 .chapter-item {
   list-style: none;
-  text-align: start;
-  padding: 0.6rem 0 0.6rem var(--chapter-item-text-left-indentation);
-  border: none;
-  margin-bottom: 0;
-  border-bottom: 1px solid var(--chapter-item-divider-color);
-  background-color: var(--chatpter-item-background);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  border: 1px solid var(--app-surface-border);
+  border-radius: var(--mantine-radius-md);
+  background: color-mix(in srgb, var(--app-surface-bg) 78%, white 22%);
   cursor: pointer;
-  transition: background-color 0.1s ease-in;
+  transition:
+    background-color 0.18s ease,
+    border-color 0.18s ease,
+    transform 0.18s ease;
 }
+
 .chapter-item.selected {
-  background-color: var(--chapter-item-hover-background);
+  background: color-mix(in srgb, var(--mantine-color-copper-0) 82%, white 18%);
+  border-color: color-mix(
+    in srgb,
+    var(--mantine-color-copper-4) 56%,
+    white 44%
+  );
 }
+
 .chapter-item.collapsed {
+  justify-content: center;
+  padding-inline: 0.25rem;
 }
 
 .chapter-item:hover {
-  background-color: var(--chapter-item-hover-background);
+  background: color-mix(in srgb, var(--mantine-color-copper-0) 72%, white 28%);
+  border-color: color-mix(
+    in srgb,
+    var(--mantine-color-copper-3) 50%,
+    white 50%
+  );
+  transform: translateY(-1px);
 }
 
-/* Grid collapse animation */
+.chapter-add-button {
+  align-self: center;
+}
+
+.chapter-editor-boundary {
+  min-width: 0;
+}
+
 .chapter-edit.menu-collapse {
-  grid-template-columns: 50px 1fr;
+  grid-template-columns: 74px minmax(0, 1fr);
+}
+
+[data-mantine-color-scheme="dark"] .chapter-item {
+  background: color-mix(
+    in srgb,
+    var(--mantine-color-dark-6) 76%,
+    var(--mantine-color-copper-9) 24%
+  );
+  border-color: color-mix(
+    in srgb,
+    var(--mantine-color-dark-4) 62%,
+    var(--mantine-color-copper-8) 38%
+  );
+}
+
+[data-mantine-color-scheme="dark"] .chapter-item.selected {
+  background: color-mix(
+    in srgb,
+    var(--mantine-color-copper-8) 44%,
+    var(--mantine-color-dark-5) 56%
+  );
+  border-color: color-mix(
+    in srgb,
+    var(--mantine-color-copper-6) 48%,
+    var(--mantine-color-dark-4) 52%
+  );
+}
+
+[data-mantine-color-scheme="dark"] .chapter-item:hover {
+  background: color-mix(
+    in srgb,
+    var(--mantine-color-copper-8) 36%,
+    var(--mantine-color-dark-5) 64%
+  );
+  border-color: color-mix(
+    in srgb,
+    var(--mantine-color-copper-6) 42%,
+    var(--mantine-color-dark-4) 58%
+  );
+}
+
+@media (max-width: 62em) {
+  .chapter-edit,
+  .chapter-edit.menu-collapse {
+    grid-template-columns: 1fr;
+  }
+
+  .chapter-menu {
+    min-height: auto;
+  }
 }

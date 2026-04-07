@@ -1,25 +1,26 @@
 import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { Card, Group, Loader, Stack, Text, Title } from "@mantine/core";
 import ChapterEditor from "../components/ChapterEditor/ChapterEditor";
 import ChaptersMenu from "../components/ChaptersMenu/ChaptersMenu";
 import ComponentErrorBoundary from "../components/ComponentErrorBoundary/ComponentErrorBoundary";
 import { useFetchChapters } from "../hooks/useFetchChapters";
-import { useNavigate, useParams } from "react-router-dom";
 import { sendRequest } from "../utils/sendRequest";
 
 function ChapterEditorPlaceholder({ isCreatingDefaultChapter }) {
   return (
-    <main className="container">
-      <header>
-        <hgroup>
-          <h2>Chapter Editor</h2>
-          <p>
-            {isCreatingDefaultChapter
-              ? "Creating your first chapter..."
-              : "Select a chapter or create a new one to start writing."}
-          </p>
-        </hgroup>
-      </header>
-    </main>
+    <Card p="xl" radius="lg">
+      <Stack gap="xs">
+        <Title order={3} c="copper.6">
+          Chapter Editor
+        </Title>
+        <Text c="dimmed">
+          {isCreatingDefaultChapter
+            ? "Creating your first chapter..."
+            : "Select a chapter or create a new one to start writing."}
+        </Text>
+      </Stack>
+    </Card>
   );
 }
 
@@ -29,8 +30,8 @@ export default function ChapterEdit() {
   const bookId = params.id;
 
   const [isMenuOpen, setIsMenuOpen] = useState(true);
-  const { fetchChapters, chapters, setChapters } = useFetchChapters();
-  console.log("chapters", chapters);
+  const { fetchChapters, chapters, setChapters, isLoading, error } =
+    useFetchChapters();
   const [selectedChapterId, setSelectedChapterId] = useState("");
   const [isCreatingDefaultChapter, setIsCreatingDefaultChapter] =
     useState(false);
@@ -50,8 +51,8 @@ export default function ChapterEdit() {
 
           setChapters([chapter]);
           setSelectedChapterId(chapter._id);
-        } catch (error) {
-          console.error(error);
+        } catch (fetchError) {
+          console.error(fetchError);
           navigate("/author/my-books");
         } finally {
           setIsCreatingDefaultChapter(false);
@@ -69,14 +70,16 @@ export default function ChapterEdit() {
     }
 
     const hasSelectedChapter = chapters.some(
-      (ch) => ch._id === selectedChapterId,
+      (chapter) => chapter._id === selectedChapterId,
     );
     if (!hasSelectedChapter) {
       setSelectedChapterId(chapters[0]._id);
     }
   }, [chapters, selectedChapterId]);
 
-  const selectedChapter = chapters.find((ch) => ch._id === selectedChapterId);
+  const selectedChapter = chapters.find(
+    (chapter) => chapter._id === selectedChapterId,
+  );
 
   const handleSelectChapter = (chapterId) => {
     setSelectedChapterId(chapterId);
@@ -98,12 +101,12 @@ export default function ChapterEdit() {
         url: `/books/${bookId}/chapters/${chapterId}`,
         method: "delete",
       });
-    } catch (error) {
-      console.log(error);
+    } catch (deleteError) {
+      console.log(deleteError);
       return;
     }
     setChapters((existingChapters) =>
-      existingChapters.filter((ch) => ch._id !== chapterId),
+      existingChapters.filter((chapter) => chapter._id !== chapterId),
     );
   };
 
@@ -114,12 +117,11 @@ export default function ChapterEdit() {
       await sendRequest({
         url: `/books/${bookId}/chapters/reorder`,
         method: "put",
-        body: { chapters: orderedChapters.map((ch) => ch._id) },
+        body: { chapters: orderedChapters.map((chapter) => chapter._id) },
       });
-    } catch (error) {
-      console.log(error);
+    } catch (reorderError) {
+      console.log(reorderError);
       setChapters(beforeReorder);
-      return;
     }
   };
 
@@ -144,51 +146,86 @@ export default function ChapterEdit() {
         method: "put",
         body: { ...chapter },
       });
-    } catch (error) {
-      console.log(error);
+    } catch (updateError) {
+      console.log(updateError);
       setChapters(chaptersBeforeUpdate);
-      return;
     }
   };
 
+  if (isLoading && !chapters.length && !isCreatingDefaultChapter) {
+    return (
+      <Card p="xl">
+        <Group justify="center" py="xl">
+          <Loader color="copper.6" />
+          <Text c="dimmed">Loading chapters...</Text>
+        </Group>
+      </Card>
+    );
+  }
+
+  if (error && !chapters.length) {
+    return (
+      <Card p="xl">
+        <Stack gap="xs">
+          <Title order={3} c="brick.6">
+            Unable to load the chapter workspace
+          </Title>
+          <Text c="dimmed">{error}</Text>
+        </Stack>
+      </Card>
+    );
+  }
+
   return (
-    <div className={`chapter-edit ${!isMenuOpen ? "menu-collapse" : ""}`}>
-      <ComponentErrorBoundary
-        componentName="Chapters menu"
-        resetKeys={[isMenuOpen, chapters.length, selectedChapterId]}
-        className="chapter-menu-boundary"
-        title="The chapters list ran into a problem."
-        message="Retry to remount the menu without interrupting the editor."
-      >
-        <ChaptersMenu
-          isMenuOpen={isMenuOpen}
-          chapters={chapters}
-          selectedChapterId={selectedChapterId}
-          onDeleteChapter={handleDeleteChapter}
-          onCreateChapter={handleCreateChapter}
-          onReorderChapters={handleReorderChapters}
-          onSelectChapter={handleSelectChapter}
-          onMenuOpen={() => setIsMenuOpen((prev) => !prev)}
-        />
-      </ComponentErrorBoundary>
-      <ComponentErrorBoundary
-        componentName="Chapter editor"
-        resetKeys={[selectedChapterId, isCreatingDefaultChapter]}
-        className="chapter-editor-boundary"
-        title="The editor hit an unexpected problem."
-        message="Switch chapters or retry to reload the editor while keeping the menu available."
-      >
-        {selectedChapter ? (
-          <ChapterEditor
-            onEditChapterContent={handleUpdateChapterContent}
-            chapter={selectedChapter}
+    <Stack gap="md">
+      <div>
+        <Title order={2} c="copper.6" fz={32}>
+          Chapter Workspace
+        </Title>
+        <Text c="dimmed" mt={6}>
+          Organize chapters, edit content, and save draft changes from one
+          focused writing view.
+        </Text>
+      </div>
+
+      <div className={`chapter-edit ${!isMenuOpen ? "menu-collapse" : ""}`}>
+        <ComponentErrorBoundary
+          componentName="Chapters menu"
+          resetKeys={[isMenuOpen, chapters.length, selectedChapterId]}
+          className="chapter-menu-boundary"
+          title="The chapters list ran into a problem."
+          message="Retry to remount the menu without interrupting the editor."
+        >
+          <ChaptersMenu
+            isMenuOpen={isMenuOpen}
+            chapters={chapters}
+            selectedChapterId={selectedChapterId}
+            onDeleteChapter={handleDeleteChapter}
+            onCreateChapter={handleCreateChapter}
+            onReorderChapters={handleReorderChapters}
+            onSelectChapter={handleSelectChapter}
+            onMenuOpen={() => setIsMenuOpen((prev) => !prev)}
           />
-        ) : (
-          <ChapterEditorPlaceholder
-            isCreatingDefaultChapter={isCreatingDefaultChapter}
-          />
-        )}
-      </ComponentErrorBoundary>
-    </div>
+        </ComponentErrorBoundary>
+        <ComponentErrorBoundary
+          componentName="Chapter editor"
+          resetKeys={[selectedChapterId, isCreatingDefaultChapter]}
+          className="chapter-editor-boundary"
+          title="The editor hit an unexpected problem."
+          message="Switch chapters or retry to reload the editor while keeping the menu available."
+        >
+          {selectedChapter ? (
+            <ChapterEditor
+              onEditChapterContent={handleUpdateChapterContent}
+              chapter={selectedChapter}
+            />
+          ) : (
+            <ChapterEditorPlaceholder
+              isCreatingDefaultChapter={isCreatingDefaultChapter}
+            />
+          )}
+        </ComponentErrorBoundary>
+      </div>
+    </Stack>
   );
 }
