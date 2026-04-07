@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import "./ShelfBook.css";
 import AnimatedListItem from "../AnimateListItem/AnimatedListItem";
+import { Button, Card, Group, Loader, Stack, Text } from "@mantine/core";
 
 export default function ShelfBook({
   book,
@@ -15,29 +16,37 @@ export default function ShelfBook({
       isCollapsing={isCollapsing}
       className="shelf-book"
     >
-      <div>
-        <strong>{book.title}</strong>{" "}
-        <span style={{ opacity: 0.7 }}>(by {book.author.penName})</span>
-      </div>
+      <Card withBorder radius="md" p="md">
+        <Group justify="space-between" align="center" wrap="wrap">
+          <Stack gap={2}>
+            <Text fw={700}>{book.title}</Text>
+            <Text size="sm" c="dimmed">
+              by {book.author.penName}
+            </Text>
+          </Stack>
 
-      <div style={{ display: "flex", gap: "0.5rem" }}>
-        <Link
-          to={`/books/${book._id}`}
-          role="button"
-          className="secondary"
-          state={{ book }}
-        >
-          View
-        </Link>
+          <Group gap="sm">
+            <Button
+              component={Link}
+              to={`/books/${book._id}`}
+              state={{ book }}
+              variant="light"
+              color="copper"
+            >
+              View
+            </Button>
 
-        <button
-          className="danger"
-          onClick={() => handleRemoveBook(book._id)}
-          disabled={isRemoving}
-        >
-          {isRemoving ? "Removing..." : "Remove"}
-        </button>
-      </div>
+            <Button
+              variant="light"
+              color="red"
+              onClick={() => handleRemoveBook(book._id)}
+              disabled={isRemoving}
+            >
+              {isRemoving ? <Loader size="xs" color="red" /> : "Remove"}
+            </Button>
+          </Group>
+        </Group>
+      </Card>
     </AnimatedListItem>
   );
 }

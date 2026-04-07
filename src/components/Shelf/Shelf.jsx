@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import "./Shelf.css";
 import AnimatedListItem from "../AnimateListItem/AnimatedListItem";
 import { Button, Card, Group, Loader, Text } from "@mantine/core";
-import { Eye, Pencil, Trash } from "lucide-react";
+import { Eye, Trash } from "lucide-react";
 
 export default function Shelf({
   shelf,
@@ -26,24 +26,18 @@ export default function Shelf({
             ({shelf.booksCount})
           </Text>
         </Group>
-        <Group align="center" justify="space-between" mt={"md"}>
-          <Group>
-            <Link to={`/shelves/${shelf._id}`} className="shelf-link">
-              <Button c={"copper.1"}>
-                <Eye size={20} />
-              </Button>
-            </Link>
-            <Link to={`/shelves/${shelf._id}/edit`} className="shelf-link">
-              <Button c={"copper.1"}>
-                <Pencil size={20} />
-              </Button>
-            </Link>
-          </Group>
+        <Group align="center" mt={"md"}>
+          <Link to={`/shelves/${shelf._id}`} className="shelf-link">
+            <Button c={"copper.1"}>
+              <Eye size={20} />
+            </Button>
+          </Link>
 
           <Button
             variant="outline"
             c={"brick.5"}
             bg={"brick.9"}
+            mt={7}
             disabled={isRemoving}
             onClick={() => handleRemoveShelf(shelf._id)}
           >
