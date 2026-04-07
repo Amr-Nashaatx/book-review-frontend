@@ -1,16 +1,7 @@
 import { Edit3, Eye, Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { sendRequest } from "../utils/sendRequest";
-
-const iconBtnStyle = {
-  padding: "6px",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  width: "36px",
-  height: "36px",
-  marginBottom: 0,
-};
+import { ActionIcon, Badge, Group, Table, Text } from "@mantine/core";
 
 export default function BooksTableRow({ bookData, onDeleteBook }) {
   const handlePreviewBook = async (bookId) => {
@@ -25,64 +16,50 @@ export default function BooksTableRow({ bookData, onDeleteBook }) {
     setTimeout(() => URL.revokeObjectURL(url), 10000);
   };
   return (
-    <tr>
-      <td>
+    <Table.Tr>
+      <Table.Td>
         <strong>{bookData.title}</strong>
-      </td>
-      <td>
-        <mark
-          style={{
-            backgroundColor: "var(--pico-ins-color)",
-            color: "white",
-            borderRadius: "4px",
-            padding: "2px 8px",
-          }}
-        >
-          <small>{bookData.status}</small>
-        </mark>
-      </td>
-      <td className="text-center">{bookData.chapters.length + 1}</td>
-      <td>
-        <small>{new Date(bookData.updatedAt).toLocaleDateString()}</small>
-      </td>
-      <td style={{ textAlign: "right" }}>
-        <div style={{ display: "inline-flex", gap: "0.25rem" }}>
-          <button
-            className="outline secondary"
-            style={iconBtnStyle}
+      </Table.Td>
+      <Table.Td>
+        <Badge color="copper" variant="light">
+          {bookData.status}
+        </Badge>
+      </Table.Td>
+      <Table.Td ta="center">{bookData.chapters.length + 1}</Table.Td>
+      <Table.Td>
+        <Text size="sm">{new Date(bookData.updatedAt).toLocaleDateString()}</Text>
+      </Table.Td>
+      <Table.Td ta="right">
+        <Group gap="xs" justify="flex-end">
+          <ActionIcon
+            variant="subtle"
+            color="gray"
             title="View Book"
             onClick={() => handlePreviewBook(bookData._id)}
           >
             <Eye size={16} strokeWidth={2.5} />
-          </button>
+          </ActionIcon>
 
-          <button
-            className="outline"
-            style={iconBtnStyle}
+          <ActionIcon
+            component={Link}
+            to={`/books/${bookData._id}/chapters`}
+            variant="subtle"
+            color="copper"
             title="Edit Chapters"
           >
-            <Link to={`/books/${bookData._id}/chapters`}>
-              <Edit3 size={16} strokeWidth={2.5} />
-            </Link>
-          </button>
+            <Edit3 size={16} strokeWidth={2.5} />
+          </ActionIcon>
 
-          <button
-            className="outline secondary"
-            style={{
-              ...iconBtnStyle,
-              borderColor: "var(--pico-form-element-invalid-border-color)",
-              color: "var(--pico-form-element-invalid-border-color)",
-            }}
+          <ActionIcon
+            variant="subtle"
+            color="red"
             title="Delete Draft"
+            onClick={() => onDeleteBook(bookData._id)}
           >
-            <Trash2
-              size={16}
-              strokeWidth={2.5}
-              onClick={() => onDeleteBook(bookData._id)}
-            />
-          </button>
-        </div>
-      </td>
-    </tr>
+            <Trash2 size={16} strokeWidth={2.5} />
+          </ActionIcon>
+        </Group>
+      </Table.Td>
+    </Table.Tr>
   );
 }
