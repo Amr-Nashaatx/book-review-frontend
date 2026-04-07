@@ -22,7 +22,6 @@ import {
 } from "@mantine/core";
 
 import { toast } from "react-toastify";
-import { useBooksStore } from "../stores/booksStore.js";
 import PublishedBookCard from "../components/PublishedBookCard.jsx";
 
 const rowStyle = {
@@ -37,7 +36,6 @@ export default function Profile() {
   const [isNewShelfModalOpen, setIsNewShelfModalOpen] = useState(false);
 
   const { fetchShelves, shelves, setShelves } = useFetchShelves();
-  const books = useBooksStore((s) => s.booksData.books);
   const { fetchMyBooks, myBooks } = useFetchMyBooks();
   const { currentUser, isLoggedIn, setCurrentUser } = useAuthStore();
   const { fetchCurrentAuthor, author } = useFetchCurrentAuthor();
@@ -298,7 +296,7 @@ export default function Profile() {
                 </Text>
               ) : (
                 <SimpleGrid cols={{ base: 2, sm: 2, md: 3 }} spacing="lg">
-                  {books.map((book) => (
+                  {myBooks.map((book) => (
                     <PublishedBookCard book={book} key={book._id} />
                   ))}
                 </SimpleGrid>

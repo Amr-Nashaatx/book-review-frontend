@@ -6,7 +6,6 @@ export const useBooksStore = create(
   devtools(
     (set, get) => ({
       booksData: { books: [], pageInfo: null },
-      genres: [],
       filters: {
         genre: [],
         author: "",
@@ -101,21 +100,9 @@ export const useBooksStore = create(
         }
       },
 
-      getGenres: async () => {
-        try {
-          const res = await sendRequest({ url: "/books/genres" });
-          set({ genres: res.genres || [] });
-          return res.genres || [];
-        } catch (err) {
-          set({ error: err?.message || String(err) });
-          throw err;
-        }
-      },
-
       clearStore: () =>
         set({
           booksData: { books: [], pageInfo: null },
-          genres: [],
           filters: {
             genre: [],
             author: "",

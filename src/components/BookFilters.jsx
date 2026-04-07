@@ -1,19 +1,16 @@
-import CustomSelect from "./CustomSelect";
+import { useGenreOptions } from "../hooks/useGenreOptions";
 import { useBooksStore } from "../stores/booksStore";
-import { Button, Grid, Select, TextInput } from "@mantine/core";
+import { Button, Grid, MultiSelect, Select, TextInput } from "@mantine/core";
 
 export default function BookFilters({ onApplyFilters }) {
   const filters = useBooksStore((s) => s.filters);
   const setFilters = useBooksStore((s) => s.setFilters);
-  const genres = useBooksStore((s) => s.genres);
   const clearFilters = useBooksStore((s) => s.clearFilters);
-  // build react-select options once genres are loaded
-  const options = genres
-    ? genres.map((genre) => ({
-        value: genre,
-        label: genre,
-      }))
-    : [];
+  const genres = useGenreOptions();
+  const options = genres.map((genre) => ({
+    value: genre,
+    label: genre,
+  }));
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -24,18 +21,14 @@ export default function BookFilters({ onApplyFilters }) {
     <form onSubmit={handleSubmit}>
       <Grid className="filters" grow>
         <Grid.Col>
-          {options.length > 0 && (
-            <CustomSelect
-              options={options}
-              value={options.filter((opt) => filters.genre.includes(opt.value))}
-              onChange={(selected) => {
-                setFilters({
-                  genre: selected ? selected.map((opt) => opt.value) : [],
-                });
-              }}
-              s
-            />
-          )}
+          <MultiSelect
+            placeholder="Genres"
+            data={options}
+            value={filters.genre}
+            onChange={(value) => setFilters({ genre: value })}
+            searchable
+            clearable
+          />
         </Grid.Col>
         <Grid.Col span={{ base: 12, md: 4 }}>
           <TextInput

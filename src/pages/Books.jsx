@@ -24,15 +24,9 @@ export default function Books() {
   //actions
   const fetchBooks = useBooksStore((s) => s.fetchBooks);
   const loadMore = useBooksStore((s) => s.loadMore);
-  const getGenres = useBooksStore((s) => s.getGenres);
-
   const [isFirstPage, setIsFirstPage] = useState(true);
   const containerRef = useRef(null);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    getGenres();
-  }, [getGenres]);
 
   useEffect(() => {
     // fetch only when there's zero cached books

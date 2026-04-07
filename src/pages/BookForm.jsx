@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSubmitForm } from "../hooks/useSubmitForm";
+import { useGenreOptions } from "../hooks/useGenreOptions";
 import Error from "../components/Error";
 import { useNavigate, useParams } from "react-router-dom";
 import { sendRequest } from "../utils/sendRequest";
@@ -10,6 +11,7 @@ import {
   Group,
   Image,
   NumberInput,
+  Select,
   Stack,
   Text,
   TextInput,
@@ -28,6 +30,7 @@ export default function BookForm({ mode = "create" }) {
     cover: "",
     publishedYear: 0,
   });
+  const genreOptions = useGenreOptions();
 
   const { isLoading, submitForm, formErrors } = useSubmitForm(
     isEdit ? `/books/${id}` : "/books",
@@ -47,6 +50,15 @@ export default function BookForm({ mode = "create" }) {
     };
     fetchBook();
   }, [isEdit, id]);
+
+  const genreData = genreOptions.map((genre) => ({
+    label: genre,
+    value: genre,
+  }));
+
+  if (book.genre && !genreData.some((option) => option.value === book.genre)) {
+    genreData.unshift({ label: book.genre, value: book.genre });
+  }
 
   const navigate = useNavigate();
   const handleChange = (e) => {
@@ -92,11 +104,19 @@ export default function BookForm({ mode = "create" }) {
                 error={formErrors.title}
               />
 
-              <TextInput
+              <Select
                 label="Genre"
-                name="genre"
                 value={book.genre}
-                onChange={handleChange}
+                onChange={(value) =>
+                  setBook((prev) => ({
+                    ...prev,
+                    genre: value ?? "",
+                  }))
+                }
+                data={genreData}
+                placeholder="Select a genre"
+                searchable
+                allowDeselect={false}
                 required
                 error={formErrors.genre}
               />
