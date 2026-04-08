@@ -177,17 +177,16 @@ export default function ChapterEdit() {
   }
 
   return (
-    <Stack gap="md">
+    <Stack gap="md" className="chapter-edit-page">
       <div>
-        <Title order={2} c="copper.6" fz={32}>
+        <Title order={2} c="copper.6" fz={34}>
           Chapter Workspace
         </Title>
         <Text c="dimmed" mt={6}>
-          Organize chapters, edit content, and save draft changes from one
-          focused writing view.
+          Keep your chapter list close, write in the center, and move between
+          drafts without leaving the workspace.
         </Text>
       </div>
-
       <div className={`chapter-edit ${!isMenuOpen ? "menu-collapse" : ""}`}>
         <ComponentErrorBoundary
           componentName="Chapters menu"

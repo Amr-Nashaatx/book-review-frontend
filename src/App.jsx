@@ -1,5 +1,5 @@
 import { Routes, Route } from "react-router-dom";
-import Layout from "./components/Layout.jsx";
+import Layout from "./layouts/Layout.jsx";
 import Signup from "./pages/Signup";
 import Login from "./pages/Login/Login.jsx";
 import Profile from "./pages/Profile";
@@ -14,6 +14,7 @@ import { useAuthStore } from "./stores/authStore";
 import { OnBoarding } from "./pages/OnBoarding.jsx";
 import AuthorBooks from "./pages/AuthorBooks.jsx";
 import ChapterEdit from "./pages/ChapterEdit.jsx";
+import WorkspaceLayout from "./layouts/WorkspaceLayout.jsx";
 
 export default function App() {
   const navigate = useNavigate();
@@ -77,15 +78,18 @@ export default function App() {
           }
         />
         <Route path="books/:id" element={<BookDetail />} />
+
+        <Route path="shelves/:id" element={<ShelfDetail />} />
+      </Route>
+      <Route path="books/:id/chapters" element={<WorkspaceLayout />}>
         <Route
-          path="books/:id/chapters"
+          index
           element={
             <ProtectedRoute>
               <ChapterEdit />
             </ProtectedRoute>
           }
         />
-        <Route path="shelves/:id" element={<ShelfDetail />} />
       </Route>
     </Routes>
   );

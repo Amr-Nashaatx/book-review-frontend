@@ -106,7 +106,7 @@ export default function BookDetail() {
   const descriptionSection = ({ title, desc }) => {
     return (
       <>
-        <Text component="dt" fw={"bold"}>
+        <Text component="dt" fw={"bold"} c={"copper.5"}>
           {title}
         </Text>
         <Text component="dd" fw={"lighter"} pl={"xl"}>

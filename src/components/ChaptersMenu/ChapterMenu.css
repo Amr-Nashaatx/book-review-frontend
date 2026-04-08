@@ -1,8 +1,16 @@
+.chapter-edit-page {
+  padding-bottom: 1rem;
+}
+
+.chapter-workspace-hero {
+  overflow: hidden;
+}
+
 .chapter-edit {
   display: grid;
-  grid-template-columns: 280px minmax(0, 1fr);
+  grid-template-columns: 300px minmax(0, 1fr);
   align-items: start;
-  gap: 1rem;
+  gap: 1.5rem;
   transition: grid-template-columns 0.3s ease;
 }
 
@@ -10,6 +18,8 @@
   display: flex;
   flex-direction: column;
   min-height: 74vh;
+  position: sticky;
+  top: 96px;
 }
 
 .chapter-menu-boundary {
@@ -111,7 +121,7 @@
 }
 
 .chapter-edit.menu-collapse {
-  grid-template-columns: 74px minmax(0, 1fr);
+  grid-template-columns: 86px minmax(0, 1fr);
 }
 
 [data-mantine-color-scheme="dark"] .chapter-item {
@@ -161,5 +171,6 @@
 
   .chapter-menu {
     min-height: auto;
+    position: static;
   }
 }
