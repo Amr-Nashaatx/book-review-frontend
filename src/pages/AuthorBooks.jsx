@@ -38,6 +38,18 @@ export default function AuthorBooks() {
     }
   };
 
+  const handleBookStatusUpdated = (updatedBook) => {
+    setMyBooks((prevBooks) => {
+      if (filters.status !== "all" && filters.status !== updatedBook.status) {
+        return prevBooks.filter((book) => book._id !== updatedBook._id);
+      }
+
+      return prevBooks.map((book) =>
+        book._id === updatedBook._id ? { ...book, ...updatedBook } : book,
+      );
+    });
+  };
+
   useEffect(() => {
     const query = {
       ...filters,
@@ -107,7 +119,11 @@ export default function AuthorBooks() {
           </Group>
 
           {myBooks.length ? (
-            <BooksTable booksData={myBooks} onDeleteBook={handleDeleteBook} />
+            <BooksTable
+              booksData={myBooks}
+              onDeleteBook={handleDeleteBook}
+              onBookStatusUpdated={handleBookStatusUpdated}
+            />
           ) : (
             <Text c="dimmed">No books found for the current filters.</Text>
           )}

@@ -79,19 +79,29 @@ export default function ChaptersMenu({
 }) {
   const [showModal, setShowModal] = useState(false);
   const [chapterTitle, setChapterTitle] = useState("");
+  const [isCreatingChapter, setIsCreatingChapter] = useState(false);
 
   const pendingOrder = useRef(null);
 
   const handleCloseModal = () => {
+    if (isCreatingChapter) return;
     setShowModal(false);
     setChapterTitle("");
   };
 
-  const handleCreateChapter = (e) => {
+  const handleCreateChapter = async (e) => {
     e.preventDefault();
-    if (!chapterTitle.trim()) return;
-    onCreateChapter(chapterTitle.trim());
-    handleCloseModal();
+    const trimmedTitle = chapterTitle.trim();
+    if (!trimmedTitle || isCreatingChapter) return;
+
+    setIsCreatingChapter(true);
+    try {
+      await onCreateChapter(trimmedTitle);
+      setShowModal(false);
+      setChapterTitle("");
+    } finally {
+      setIsCreatingChapter(false);
+    }
   };
 
   return (
@@ -109,6 +119,7 @@ export default function ChaptersMenu({
               placeholder="Enter chapter title"
               value={chapterTitle}
               onChange={(e) => setChapterTitle(e.target.value)}
+              disabled={isCreatingChapter}
               autoFocus
             />
             <Group justify="flex-end">
@@ -117,11 +128,19 @@ export default function ChaptersMenu({
                 variant="light"
                 color="gray"
                 size="lg"
+                disabled={isCreatingChapter}
                 onClick={handleCloseModal}
               >
                 x
               </ActionIcon>
-              <ActionIcon type="submit" size="lg" variant="filled" color="copper">
+              <ActionIcon
+                type="submit"
+                size="lg"
+                variant="filled"
+                color="copper"
+                loading={isCreatingChapter}
+                disabled={!chapterTitle.trim() || isCreatingChapter}
+              >
                 <Plus size={16} />
               </ActionIcon>
             </Group>

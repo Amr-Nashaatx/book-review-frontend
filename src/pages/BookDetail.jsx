@@ -56,7 +56,7 @@ export default function BookDetail() {
   const { isLoggedIn, currentUser } = useAuthStore();
 
   const isOwner = book
-    ? isLoggedIn && currentUser?.authorId === book.authorId._id
+    ? isLoggedIn && currentUser?.authorId === book.author._id
     : false;
 
   const navigate = useNavigate();
@@ -128,7 +128,7 @@ export default function BookDetail() {
             <Title order={2} c={"copper.6"}>
               {book.title}
             </Title>
-            <Text c={"dimmed"}>by {book.authorId.penName}</Text>
+            <Text c={"dimmed"}>by {book.author.penName}</Text>
           </header>
 
           <Grid gutter={0}>

@@ -7,6 +7,8 @@ import ComponentErrorBoundary from "../components/ComponentErrorBoundary/Compone
 import { useFetchChapters } from "../hooks/useFetchChapters";
 import { sendRequest } from "../utils/sendRequest";
 
+const defaultChapterCreationRequests = new Map();
+
 function ChapterEditorPlaceholder({ isCreatingDefaultChapter }) {
   return (
     <Card p="xl" radius="lg">
@@ -37,30 +39,50 @@ export default function ChapterEdit() {
     useState(false);
 
   useEffect(() => {
+    let isMounted = true;
+
     async function fetchInitialChapters() {
       const fetchedChapters = await fetchChapters(bookId);
 
       if (!fetchedChapters.length) {
+        if (!isMounted) return;
+
         setIsCreatingDefaultChapter(true);
         try {
-          const { chapter } = await sendRequest({
-            url: `/books/${bookId}/chapters`,
-            method: "post",
-            body: { title: "New" },
-          });
+          let createRequest = defaultChapterCreationRequests.get(bookId);
+          if (!createRequest) {
+            createRequest = sendRequest({
+              url: `/books/${bookId}/chapters`,
+              method: "post",
+              body: { title: "New" },
+            });
+            defaultChapterCreationRequests.set(bookId, createRequest);
+          }
+
+          const { chapter } = await createRequest;
+
+          if (!isMounted) return;
 
           setChapters([chapter]);
           setSelectedChapterId(chapter._id);
         } catch (fetchError) {
+          if (!isMounted) return;
           console.error(fetchError);
           navigate("/author/my-books");
         } finally {
-          setIsCreatingDefaultChapter(false);
+          defaultChapterCreationRequests.delete(bookId);
+          if (isMounted) {
+            setIsCreatingDefaultChapter(false);
+          }
         }
       }
     }
 
     fetchInitialChapters();
+
+    return () => {
+      isMounted = false;
+    };
   }, [bookId, fetchChapters, navigate, setChapters]);
 
   useEffect(() => {

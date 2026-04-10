@@ -1,7 +1,11 @@
 import BooksTableRow from "./BooksTableRow";
 import { Table } from "@mantine/core";
 
-export default function BooksTable({ booksData, onDeleteBook }) {
+export default function BooksTable({
+  booksData,
+  onDeleteBook,
+  onBookStatusUpdated,
+}) {
   return (
     <Table highlightOnHover>
       <Table.Thead>
@@ -19,6 +23,7 @@ export default function BooksTable({ booksData, onDeleteBook }) {
             key={book._id}
             bookData={book}
             onDeleteBook={onDeleteBook}
+            onBookStatusUpdated={onBookStatusUpdated}
           />
         ))}
       </Table.Tbody>
