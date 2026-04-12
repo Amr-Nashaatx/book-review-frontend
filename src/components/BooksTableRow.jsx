@@ -1,9 +1,18 @@
-import { Check, Edit3, Eye, UploadCloud, Trash2, X } from "lucide-react";
+import {
+  Check,
+  Edit3,
+  Eye,
+  UploadCloud,
+  Trash2,
+  X,
+  Share2Icon,
+} from "lucide-react";
 import { Link } from "react-router-dom";
 import { sendRequest } from "../utils/sendRequest";
 import {
   ActionIcon,
   Badge,
+  em,
   Group,
   Select,
   Table,
@@ -14,6 +23,7 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import PublishBookConfirmation from "./PublishBookConfirmation";
 import BookActionConfirmation from "./BookActionConfirmation";
+import SharePreviewConfirmation from "./SharePreviewConfirmation";
 
 export default function BooksTableRow({
   bookData,
@@ -25,11 +35,17 @@ export default function BooksTableRow({
     warningModalOpened,
     { open: warningModalOpen, close: warningModalClose },
   ] = useDisclosure(false);
-  const [deleteModalOpened, { open: openDeleteModal, close: closeDeleteModal }] =
+  const [
+    deleteModalOpened,
+    { open: openDeleteModal, close: closeDeleteModal },
+  ] = useDisclosure(false);
+  const [shareModalOpened, { open: shareModalOpen, close: shareModalClose }] =
     useDisclosure(false);
+
   const [isEditing, setIsEditing] = useState(false);
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isSharing, setIsSharing] = useState(false);
   const [pendingStatus, setPendingStatus] = useState(bookData.status);
   const statusOptionsByCurrentStatus = {
     draft: ["preview"],
@@ -56,7 +72,10 @@ export default function BooksTableRow({
     setTimeout(() => URL.revokeObjectURL(url), 10000);
   };
 
-  const handleUpdateStatus = async (status, { skipConfirmation = false } = {}) => {
+  const handleUpdateStatus = async (
+    status,
+    { skipConfirmation = false } = {},
+  ) => {
     if (!status || status === bookData.status) {
       setIsEditing(false);
       return;
@@ -96,6 +115,9 @@ export default function BooksTableRow({
   const isBookPublishable = (book) => {
     if (!book.chapters || !(book.chapters.length > 1)) return false;
     if (book.status !== "draft") return false;
+    if (!statusOptionsByCurrentStatus[book.status].includes("published"))
+      return false;
+
     return true;
   };
 
@@ -110,6 +132,20 @@ export default function BooksTableRow({
     setIsEditing(false);
   };
 
+  const handleSharePreview = async (bookId, email, duration) => {
+    try {
+      await sendRequest({
+        url: `/preview-share/${bookId}`,
+        method: "post",
+        body: { email, duration },
+      });
+      shareModalClose();
+      toast.success(`You share your preview with ${email} now `);
+    } catch (error) {
+      console.error(error);
+      toast.error("Couldn't share your preview, something went wrong!");
+    }
+  };
   const handleDeleteConfirmed = async () => {
     try {
       setIsDeleting(true);
@@ -210,9 +246,20 @@ export default function BooksTableRow({
               </ActionIcon>
             )}
 
+            {bookData.status === "preview" && (
+              <ActionIcon
+                variant="subtle"
+                color="copper"
+                title="Share Preview"
+                onClick={() => shareModalOpen()}
+              >
+                <Share2Icon size={16} strokeWidth={2.5} />
+              </ActionIcon>
+            )}
+
             <ActionIcon
               variant="subtle"
-              color="gray"
+              color="copper"
               title="View Book"
               onClick={() => handlePreviewBook(bookData._id)}
             >
@@ -240,6 +287,15 @@ export default function BooksTableRow({
           </Group>
         </Table.Td>
       </Table.Tr>
+
+      {/* Action Modals */}
+      <SharePreviewConfirmation
+        close={shareModalClose}
+        opened={shareModalOpened}
+        onActionLoading={isSharing}
+        onConfirm={handleSharePreview}
+        bookId={bookData._id}
+      />
       <PublishBookConfirmation
         book={bookData}
         close={close}

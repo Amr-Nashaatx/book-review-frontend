@@ -28,7 +28,6 @@ export default function BookForm({ mode = "create" }) {
     genre: "",
     description: "",
     cover: "",
-    publishedYear: 0,
   });
   const genreOptions = useGenreOptions();
 
@@ -129,22 +128,6 @@ export default function BookForm({ mode = "create" }) {
                 minRows={6}
                 required
                 error={formErrors.description}
-              />
-
-              <NumberInput
-                label="Published Year"
-                name="publishedYear"
-                value={book.publishedYear}
-                onChange={(value) =>
-                  setBook((prev) => ({
-                    ...prev,
-                    publishedYear: value ?? "",
-                  }))
-                }
-                allowDecimal={false}
-                clampBehavior="none"
-                required
-                error={formErrors.publishedYear}
               />
 
               <UploadField
